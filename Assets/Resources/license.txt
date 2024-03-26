@@ -1,0 +1,11 @@
+Model Information:
+* title:	Low Poly Chess Set
+* source:	https://sketchfab.com/3d-models/low-poly-chess-set-0e8aa570aa5448eca820d8ae760d663b
+* author:	e Rac (https://sketchfab.com/e_rac)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Low Poly Chess Set" (https://sketchfab.com/3d-models/low-poly-chess-set-0e8aa570aa5448eca820d8ae760d663b) by e Rac (https://sketchfab.com/e_rac) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
