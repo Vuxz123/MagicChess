@@ -8,3 +8,5 @@ Magic Chess is a chess variant that is played on a 8x8 board with 2 players. The
 ### Development Notes
 - [Position](Assets/Readme/Position.md)
 - [EventSystem](Assets/Readme/EventSystem.md)
+- [Internal Communication](Assets/Readme/Communication.md)
+- [Client Architecture](Assets/Readme/ClientArchitecture.md)
