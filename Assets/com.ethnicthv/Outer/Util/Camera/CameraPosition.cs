@@ -1,4 +1,4 @@
-﻿using com.ethnicthv.Outer.Movement;
+﻿using com.ethnicthv.Outer.Behaviour.Movement;
 using UnityEngine;
 
 namespace com.ethnicthv.Outer.Util.Camera

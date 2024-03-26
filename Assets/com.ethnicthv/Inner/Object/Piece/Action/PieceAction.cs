@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using com.ethnicthv.Inner.Object.Piece.Exception;
-using com.ethnicthv.Outer.Piece;
+using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Object.Piece.Action
 {
@@ -16,10 +16,20 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
             {
                 return pieceAction;
             }
-            throw new ArgumentOutOfRangeException();
+            throw new ActionTypeNotFoundException($"piece type {type} not found in piece action map");
+        }
+        
+        public static void Setup()
+        {
+            new KingAction();
+            new QueenAction();
+            new BishopAction();
+            new KnightAction();
+            new RookAction();
+            new PawnAction();
         }
 
-        protected Dictionary<ActionType, ActionFunction> ActionMap = new Dictionary<ActionType, ActionFunction>();
+        protected Dictionary<ActionType, ActionFunction> ActionMap;
 
         protected PieceAction(Inner.Object.Piece.Piece.Type type , Dictionary<ActionType, ActionFunction> actionMap)
         {
@@ -31,7 +41,7 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
         {
             if (ActionMap.TryGetValue(type, out var actionFunction))
             {
-                if (data.Length == (int)type)
+                if (data.Length != (int)type)
                     throw new ActionParamNotMatchException(
                         $"Action {type} requires {(int)type} parameters, but {data.Length} were given");
                 actionFunction(piece, data);

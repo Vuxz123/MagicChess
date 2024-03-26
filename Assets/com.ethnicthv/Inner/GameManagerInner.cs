@@ -1,6 +1,9 @@
 ﻿using System;
 using com.ethnicthv.Inner.Object.ChessBoard;
+using com.ethnicthv.Inner.Object.Piece;
+using com.ethnicthv.Inner.Object.Piece.Action;
 using com.ethnicthv.Outer;
+using com.ethnicthv.Outer.Util;
 using UnityEngine;
 
 namespace com.ethnicthv.Inner
@@ -16,9 +19,14 @@ namespace com.ethnicthv.Inner
         
         private ChessBoard _chessBoard;
 
-        public GameManagerInner()
+        private GameManagerInner()
         {
-            
+            Init();
+        }
+        
+        private void Init()
+        {
+            PieceAction.Setup();
         }
 
         public ChessBoard CreateChessBoard()
@@ -34,5 +42,20 @@ namespace com.ethnicthv.Inner
         }
 
         public ChessBoard Board => _chessBoard;
+        
+        public static (int, int) ConvertOuterToInnerPos(CbPos pos)
+        {
+            return (pos.Y, pos.X);
+        }
+        
+        public static (int, int) ConvertOuterToInnerPos((int,int) pos)
+        {
+            return (pos.Item2, pos.Item1);
+        }
+        
+        public static (int, int) ConvertOuterToInnerPos(int x, int y)
+        {
+            return (y, x);
+        }
     }
 }

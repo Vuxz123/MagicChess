@@ -1,4 +1,4 @@
-﻿using com.ethnicthv.Outer.Chess.Square;
+﻿using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Util.Networking;
 
 namespace com.ethnicthv.Outer.Event

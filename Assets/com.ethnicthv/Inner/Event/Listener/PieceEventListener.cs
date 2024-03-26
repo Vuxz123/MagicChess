@@ -1,6 +1,5 @@
-﻿using System;
-using com.ethnicthv.Util.Event;
-using UnityEngine;
+﻿using com.ethnicthv.Util.Event;
+using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Event.Listener
 {

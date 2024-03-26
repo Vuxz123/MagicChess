@@ -1,7 +1,9 @@
 ﻿using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Inner.Object.ChessBoard.Exception;
-using com.ethnicthv.Outer.Chess;
+using com.ethnicthv.Outer.Behaviour.Chess;
+using com.ethnicthv.Outer.Behaviour.Piece;
 using com.ethnicthv.Util.Event;
+using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Object.ChessBoard
 {
@@ -10,7 +12,7 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
         private readonly Piece.Piece[,] _board;
 
         private IChessBoardOuter _outer;
-        
+
         public ChessBoard()
         {
             _board = new Piece.Piece[8, 8];
@@ -27,6 +29,7 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
                 _board[1, i] = new Piece.Piece(Piece.Piece.Type.Pawn, Piece.Piece.Side.White);
                 _board[6, i] = new Piece.Piece(Piece.Piece.Type.Pawn, Piece.Piece.Side.Black);
             }
+
             _board[7, 0] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.Black);
             _board[7, 1] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.Black);
             _board[7, 2] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.Black);
@@ -36,13 +39,13 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             _board[7, 6] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.Black);
             _board[7, 7] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.Black);
         }
-        
+
         public IChessBoardOuter Outer
         {
             get => _outer;
             protected internal set => _outer = value;
         }
-        
+
         public Piece.Piece this[int x, int y]
         {
             get => _board[x, y];
@@ -54,7 +57,7 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             get => _board[pos.Item1, pos.Item2];
             set => _board[pos.Item1, pos.Item2] = value;
         }
-        
+
         public (int, int) GetPiecePosition(Piece.Piece piece)
         {
             for (var i = 0; i < 8; i++)
@@ -71,16 +74,41 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             throw new PieceNotFoundException($"Piece {piece} not found in the board");
         }
 
-        public void MovePiece(int fromX, int fromY, int toX, int toY)
+        public void MovePiece(IPiece controller, int fromX, int fromY, int toX, int toY)
         {
-            EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client,new ChessBoardEvent( ChessBoardEvent.Type.Capture,fromX, fromY, toX, toY),
-                e =>
-                {
-                    
-                });
-            _board[toX, toY] = _board[fromX, fromY];
-            _board[fromX, fromY] = null;
-            
+            Debug.Log("ChessBoard: MovePiece!!");
+            try
+            {
+                Debug.Log("ChessBoard: Call Client Event");
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, new ChessBoardEvent(
+                        ChessBoardEvent.Type.Move,
+                        controller, (fromX, fromY), (toX, toY)),
+                    e => { });
+                Debug.Log("ChessBoard: Call Local Event");
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, new ChessBoardEvent(
+                        ChessBoardEvent.Type.Move,
+                        controller, (fromX, fromY), (toX, toY)),
+                    e =>
+                    {
+                        var dest = ((int, int))e.data[2];
+                        var origin = ((int, int))e.data[1];
+                        //replace the piece in the board
+                        
+                        (_board[dest.Item1, dest.Item2], _board[origin.Item1, origin.Item2]) = 
+                            (_board[origin.Item1, origin.Item2], _board[dest.Item1, dest.Item2]);
+                        Debug.Log("Callback: a piece has been moved!");
+                    });
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogException(e);
+                throw;
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"{nameof(_board)}: {_board}";
         }
     }
 }

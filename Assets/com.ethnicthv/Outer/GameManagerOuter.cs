@@ -1,7 +1,7 @@
 ﻿using System;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Object.ChessBoard;
-using com.ethnicthv.Outer.Chess;
+using com.ethnicthv.Outer.Behaviour.Chess;
 
 namespace com.ethnicthv.Outer
 {
@@ -22,9 +22,14 @@ namespace com.ethnicthv.Outer
         {
         }
         
-        public static (int, int) ConvertOuterToInnerPos(int x, int y)
+        public static (int, int) ConvertInnerToOuterPos(int x, int y)
         {
             return (y, x);
+        }
+        
+        public static (int, int) ConvertInnerToOuterPos((int,int) pos)
+        {
+            return (pos.Item2, pos.Item1);
         }
     }
 }

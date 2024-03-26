@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace com.ethnicthv.Util.Event
 {
@@ -38,7 +39,7 @@ namespace com.ethnicthv.Util.Event
 
             var eventListeners = ReflectionHelper.GetClassesWithAttribute<EventListener>();
 
-            Debug.Log($"Found {eventListeners.Count()} event listeners");
+            UnityEngine.Debug.Log($"Found {eventListeners.Count()} event listeners");
 
             foreach (var listener in eventListeners)
             {
@@ -50,7 +51,7 @@ namespace com.ethnicthv.Util.Event
                     var methods = ReflectionHelper.GetMethodsWithAttribute<LocalListenerAttribute>(listener);
                     foreach (var method in methods)
                     {
-                        Debug.Log("Local" + method.ToSafeString());
+                        UnityEngine.Debug.Log("Local" + method.ToSafeString());
                         var handler =
                             method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
                                 activator);
@@ -62,7 +63,7 @@ namespace com.ethnicthv.Util.Event
                     var methods = ReflectionHelper.GetMethodsWithAttribute<ClientNetworkingSenderAttribute>(listener);
                     foreach (var method in methods)
                     {
-                        Debug.Log( "Client: " + method.ToSafeString());
+                        UnityEngine.Debug.Log( "Client: " + method.ToSafeString());
                         var handler =
                             method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
                                 activator);
@@ -75,7 +76,7 @@ namespace com.ethnicthv.Util.Event
                     var methods = ReflectionHelper.GetMethodsWithAttribute<ServerNetworkingListenerAttribute>(listener);
                     foreach (var method in methods)
                     {
-                        Debug.Log("Server" + method.ToSafeString());
+                        UnityEngine.Debug.Log("Server" + method.ToSafeString());
                         var handler =
                             method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
                                 activator);
@@ -111,9 +112,33 @@ namespace com.ethnicthv.Util.Event
             Server
         }
 
+        /// <summary>
+        /// The DispatchEvent method in the EventManager class is responsible for dispatching events of a specific type T where T is a subclass of Event. This method can only be called from the MainThread to prevent nested call
+        /// </summary>
+        /// <param name="handlerType">
+        /// This is an enumeration of type HandlerType which determines the type of handler storage to be used when dispatching an event. The HandlerType enumeration has three possible values: Local, Client, and Server. The chosen handlerType affects where the event is registered and subsequently dispatched.
+        /// </param>
+        /// <param name="e">
+        /// This is an object of type T representing the event to be dispatched. This object must not be null.
+        /// </param>
+        /// <param name="callback">
+        /// This is an optional parameter of type `CallbackFunction`. If provided, this callback function will be called after the event dispatch finishes.
+        /// </param>
+        /// <typeparam name="T">
+        /// Type of the event
+        /// </typeparam>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public async void DispatchEvent<T>(HandlerType handlerType, T e, CallbackFunction<T> callback = null) where T : Event
         {
-            Debug.Log("Dispatching event: " + e.GetType().Name);
+            UnityEngine.Debug.Log("EventManager: Checking!");
+            //Check if the event dispatching is on the main thread
+            if (!GameManager.IsOnMainThread())
+            {
+                throw new Exception("Event dispatching is not on the main thread");
+            }
+            //Assert e not null
+            Assert.IsNotNull(e);
             var storage = handlerType switch
             {
                 HandlerType.Local => Local,
@@ -121,10 +146,19 @@ namespace com.ethnicthv.Util.Event
                 HandlerType.Server => Server,
                 _ => throw new ArgumentOutOfRangeException(nameof(handlerType), handlerType, null)
             };
-            await Task.Run(() =>
+            UnityEngine.Debug.Log("EventManager: DispatchEvent " + e.GetType().Name);
+            try
             {
-                storage.DispatchEvent(e, callback);
-            });
+                await Task.Run(() =>
+                {
+                    storage.DispatchEvent(e, callback);
+                });
+            }
+            catch (AggregateException exception)
+            {
+                UnityEngine.Debug.LogError(exception);
+                throw;
+            }
         }
     }
 }

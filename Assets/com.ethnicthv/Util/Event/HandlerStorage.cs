@@ -37,7 +37,7 @@ namespace com.ethnicthv.Util.Event
         {
             var type = typeof(T);
             if (!_handlers.ContainsKey(type)) return;
-            Debug.Log(_handlers[type].Count);
+            UnityEngine.Debug.Log(_handlers[type].Count);
             foreach (var handler in _handlers[type])
             {
                 try
@@ -47,7 +47,7 @@ namespace com.ethnicthv.Util.Event
                 catch (TargetInvocationException ex)
                 {
                     // Handle the exception
-                    Debug.LogError($"An error occurred while handling event: {ex.InnerException}");
+                    UnityEngine.Debug.LogError($"An error occurred while handling event: {ex.InnerException}");
                 }
             }
             callback?.Invoke(e);

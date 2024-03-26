@@ -1,5 +1,5 @@
 ﻿using com.ethnicthv.Inner;
-using com.ethnicthv.Outer.Chess;
+using com.ethnicthv.Outer.Behaviour.Chess;
 
 namespace com.ethnicthv.Outer
 {

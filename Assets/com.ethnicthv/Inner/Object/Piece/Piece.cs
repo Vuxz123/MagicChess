@@ -1,5 +1,6 @@
 ﻿using com.ethnicthv.Inner.Object.Piece.Action;
-using com.ethnicthv.Outer.Piece;
+using com.ethnicthv.Outer.Behaviour.Piece;
+using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Object.Piece
 {
@@ -96,10 +97,18 @@ namespace com.ethnicthv.Inner.Object.Piece
         {
             King = 1,Queen = 2,Rook = 3,Bishop = 4,Knight = 5,Pawn = 6
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(_id)}: {_id}, {nameof(_type)}: {_type}, {nameof(_side)}: {_side}, {nameof(_isMovable)}: {_isMovable}, {nameof(_isDefendable)}: {_isDefendable}, {nameof(_isAttackable)}: {_isAttackable}, {nameof(_isDead)}: {_isDead}";
+        }
     }
     
     public enum  ActionType
     {
+        /// <summary>
+        /// Action type for move, accepts 3 parameters, Piece and (int, int) location
+        /// </summary>
         Move = 2,
         Attack = 1,
         Defend = 1,
