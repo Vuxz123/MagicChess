@@ -53,7 +53,7 @@ There are 3 types of handlers:
 
 Each type of handler will be dispatched in a different way:
 - `HandlerType.Local` : The event will be dispatched synchronously.
-- `HandlerType.Client` : The event will be dispatched asynchronously in its own thread. Should only be used for sending events to the server.
+- `HandlerType.Client` : The event will be dispatched asynchronously. Should only be used for sending events to the server. After the event is dispatched, the event will be sent to the server.
 - `HandlerType.Server` : The event will be dispatched synchronously in its own thread. Should only be used for receiving events from the server.
 
 More details about the `EventManager` class can be found in the [EventManager.cs](../com.ethnicthv/Util/Event/EventManager.cs) file.
