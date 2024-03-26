@@ -14,7 +14,7 @@ namespace com.ethnicthv.Outer.Event.Listener
     {
         private readonly List<ISquare> _selectedSquares = new();
 
-        [LocalListener]
+        [LocalHandler]
         public bool HandleEventLocal(OnSquareSelectingEvent e)
         {
             Debug.Log("OnSquareSelectedListener: " + e);

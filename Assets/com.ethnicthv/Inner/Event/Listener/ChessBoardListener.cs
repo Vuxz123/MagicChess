@@ -9,7 +9,7 @@ namespace com.ethnicthv.Inner.Event.Listener
     [EventListener(eventType: typeof(ChessBoardEvent))]
     public class ChessBoardListener
     {
-        [LocalListener]
+        [LocalHandler]
         public bool HandleEventLocal(ChessBoardEvent e)
         {
             Debug.Log("HandleEventLocal: " + e);
@@ -22,7 +22,7 @@ namespace com.ethnicthv.Inner.Event.Listener
             return true;
         }
         
-        [ServerNetworkingListener]
+        [ServerNetworkingHandler]
         public bool HandleEventServer(ChessBoardEvent e)
         {
             Console.WriteLine("ChessBoardListener: " + e);

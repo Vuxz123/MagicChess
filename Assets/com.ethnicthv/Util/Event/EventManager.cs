@@ -48,7 +48,7 @@ namespace com.ethnicthv.Util.Event
                 var eventType = listener.GetCustomAttributes(false).OfType<EventListener>().First().EventType;
                 {
                     //Get LocalEventListeners
-                    var methods = ReflectionHelper.GetMethodsWithAttribute<LocalListenerAttribute>(listener);
+                    var methods = ReflectionHelper.GetMethodsWithAttribute<LocalHandlerAttribute>(listener);
                     foreach (var method in methods)
                     {
                         UnityEngine.Debug.Log("Local" + method.ToSafeString());
@@ -73,7 +73,7 @@ namespace com.ethnicthv.Util.Event
                 }
                 {
                     //Get ServerNetworkingListeners
-                    var methods = ReflectionHelper.GetMethodsWithAttribute<ServerNetworkingListenerAttribute>(listener);
+                    var methods = ReflectionHelper.GetMethodsWithAttribute<ServerNetworkingHandlerAttribute>(listener);
                     foreach (var method in methods)
                     {
                         UnityEngine.Debug.Log("Server" + method.ToSafeString());

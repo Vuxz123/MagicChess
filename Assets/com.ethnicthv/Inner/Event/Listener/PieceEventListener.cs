@@ -32,7 +32,7 @@ namespace com.ethnicthv.Inner.Event.Listener
             }
         }
         
-        [LocalListener]
+        [LocalHandler]
         public bool HandleEventLocal(PieceEvent e)
         {
             Debug.Log(e.piece);

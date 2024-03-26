@@ -18,11 +18,11 @@ namespace com.ethnicthv.Util.Event
         }
     }
     
-    internal class LocalListenerAttribute : Attribute
+    internal class LocalHandlerAttribute : Attribute
     {
     }
     
-    internal class ServerNetworkingListenerAttribute : Attribute
+    internal class ServerNetworkingHandlerAttribute : Attribute
     {
     }
     
