@@ -12,6 +12,8 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
         {
             SetPosToSquare(pos.Item1, pos.Item2);
         }
+        
+        public Inner.Object.Piece.Piece Inner { get; }
 
         void DoAction(ActionType move, params object[] data);
     }

@@ -10,7 +10,7 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
         {
             Debug.Log("PawnAction: Move PawnAction");
             if (!p.IsMovable()) return;
-            UnityEngine.Debug.Log("PawnAction: Pawn isMovable");
+            Debug.Log("PawnAction: Pawn isMovable");
             var board = GameManagerInner.Instance.Board;
             
             Debug.Assert(d.Length == 2);
@@ -19,13 +19,13 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
             var controller = (IPiece) d[0];
             var targetPosition = ((int, int)) d[1];
             var currentPosition = board.GetPiecePosition(p);
-            UnityEngine.Debug.Log("PawnAction: Getting Data Complete");
+            Debug.Log("PawnAction: Getting Data Complete");
             
             var target = board[targetPosition];
-            UnityEngine.Debug.Log("PawnAction: Target: " + target);
+            Debug.Log("PawnAction: Target: " + target);
             if (target != null) return;
 
-            UnityEngine.Debug.Log("PawnAction: Calling MovePiece");
+            Debug.Log("PawnAction: Calling MovePiece");
             board.MovePiece(controller, currentPosition.Item1, currentPosition.Item2, targetPosition.Item1, targetPosition.Item2);
         };
         private static ActionFunction Attack = (p, d) => { };

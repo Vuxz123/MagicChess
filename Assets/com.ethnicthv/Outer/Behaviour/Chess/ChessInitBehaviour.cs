@@ -28,7 +28,6 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
         {
             //get the size of the black square cell mesh
             var size = CalcSize();
-            Debug.Log(size.ToString());
             //divide the blackSquares into 8x8 squares
             GenGrid(size);
             InitPieces(GameManagerInner.Instance.CreateChessBoard());

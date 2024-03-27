@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
 using YamlDotNet.Serialization;
 
 namespace com.ethnicthv.Util
@@ -11,7 +13,7 @@ namespace com.ethnicthv.Util
         {
             if (_config != null) return _config;
             var deserializer = new DeserializerBuilder().Build();
-            var yaml = System.IO.File.ReadAllText("Assets/com.ethnicthv/config.yml");
+            var yaml = Resources.Load<TextAsset>("config/config").text;
             var data = deserializer.Deserialize<Dictionary<string, object>>(yaml);
             _config = new Config(data);
             return _config;

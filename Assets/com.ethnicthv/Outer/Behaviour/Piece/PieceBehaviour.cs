@@ -8,8 +8,6 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 {
     public class PieceBehaviour : OuterObjectAbstract, IPiece
     {
-        private Inner.Object.Piece.Piece _piece;
-
         private ModifiablePositionMovementBehaviour _movementBehaviour;
 
         private Queue<ActionData> _actionQueue;
@@ -42,7 +40,7 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 
         public void SetPiece(Inner.Object.Piece.Piece piece)
         {
-            _piece = piece;
+            Inner = piece;
         }
 
         public ModifiablePositionMovementBehaviour GetMovementBehaviour()
@@ -66,6 +64,8 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
             SetPosToSquare(pos.Item1, pos.Item2);
         }
 
+        public Inner.Object.Piece.Piece Inner { get; private set; }
+
         public void DoAction(ActionType move, params object[] data)
         {
             lock (_actionQueue)
@@ -76,7 +76,7 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 
         private void SendActionToInner(ActionData actionData)
         {
-            _piece.DoAction(actionData.at, actionData.d);
+            Inner.DoAction(actionData.at, actionData.d);
         }
 
         private class ActionData

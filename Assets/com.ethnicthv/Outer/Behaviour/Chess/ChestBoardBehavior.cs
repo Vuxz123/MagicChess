@@ -2,6 +2,7 @@
 using com.ethnicthv.Inner;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Outer.Behaviour.Piece;
+using com.ethnicthv.Outer.Util;
 using UnityEngine;
 using Debug = com.ethnicthv.Util.Debug;
 
@@ -45,6 +46,11 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
         public IPiece GetPiece(GameObject piece)
         {
             return (from p in _chessInitBehaviour.Pieces where p.Item1 == piece select p.Item2).FirstOrDefault();
+        }
+
+        public IPiece GetPiece(CbPos pos)
+        {
+            return GetPiece(pos.X, pos.Y);
         }
 
         public void TestCall()

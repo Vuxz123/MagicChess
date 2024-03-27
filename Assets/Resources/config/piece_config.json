@@ -1,0 +1,62 @@
+﻿{
+  "Knight": {
+    "name": "Knight",
+    "health": 50,
+    "damage": 10,
+    "defence": 10,
+    "range": 1,
+    "move_range": 2,
+    "cost_per_move": 1,
+    "move_type": "L"
+  },
+  "Pawn": {
+    "name": "Pawn",
+    "health": 20,
+    "damage": 5,
+    "defence": 5,
+    "range": 1,
+    "move_range": 1,
+    "cost_per_move": 1,
+    "move_type": "Straight"
+  },
+  "Bishop": {
+    "name": "Bishop",
+    "health": 50,
+    "damage": 10,
+    "defence": 5,
+    "range": 2,
+    "move_range": 16,
+    "cost_per_move": 1,
+    "move_type": "Diagonal"
+  },
+  "Rook": {
+    "name": "Rook",
+    "health": 80,
+    "damage": 15,
+    "defence": 10,
+    "range": 1,
+    "move_range": 2,
+    "cost_per_move": 1,
+    "move_type": "Straight"
+  },
+  "Queen": {
+    "name": "Queen",
+    "health": 100,
+    "damage": 20,
+    "defence": 15,
+    "range": 2,
+    "move_range": 16,
+    "cost_per_move": 1,
+    "move_type": "Both"
+  },
+  "King": {
+    "name": "King",
+    "health": 10,
+    "damage": 5,
+    "defence": 0,
+    "range": 1,
+    "move_range": 1,
+    "cost_per_move": 1,
+    "move_type": "Both"
+  }
+}

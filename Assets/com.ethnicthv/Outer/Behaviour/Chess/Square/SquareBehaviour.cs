@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using com.ethnicthv.Inner;
+﻿using com.ethnicthv.Inner;
 using com.ethnicthv.Outer.Util;
 using UnityEngine;
 using Debug = com.ethnicthv.Util.Debug;
@@ -11,20 +10,20 @@ namespace com.ethnicthv.Outer.Behaviour.Chess.Square
         private CbPos _pos;
         private CbType _type;
         private GameObject _highlight;
-        private MeshRenderer _renderer;
+        private MeshRenderer _highlightRenderer;
         
         private bool _isSelected;
         private Color _highlightColor;
         private int _isDirty;
         
-        private int _emmisionColor = Shader.PropertyToID("Emmission Color");
+        private readonly int _emissionColor = Shader.PropertyToID("_Emission_Color");
 
         private void Start()
         {
             if (_highlight != null) return;
             _highlight = Instantiate(Resources.Load<GameObject>("Prefab/Chess/Board/Cell"));
             _highlight.transform.localScale = Vector3.one * 1.23f;
-            _renderer = _highlight.GetComponent<MeshRenderer>();
+            _highlightRenderer = _highlight.GetComponent<MeshRenderer>();
             var transform1 = transform;
             var position = transform1.position;
             _highlight.transform.position = new Vector3(position.x,2.9f,position.z);
@@ -48,7 +47,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess.Square
         
         private void SetHighlightColor(Color color)
         {
-            _renderer.material.SetColor(_emmisionColor, color);
+            _highlightRenderer.material.SetColor(_emissionColor, color);
         }
         
         /// <summary>

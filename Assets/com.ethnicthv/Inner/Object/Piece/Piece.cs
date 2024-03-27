@@ -13,10 +13,14 @@ namespace com.ethnicthv.Inner.Object.Piece
         private readonly Type _type;
         private readonly Side _side;
 
+        public Side side => _side;
+
         private bool _isMovable = true;
         private bool _isDefendable = true;
         private bool _isAttackable = true;
         private bool _isDead = false;
+        
+        private PieceProperties _properties;
 
         public Piece(Type type, Side side)
         {
@@ -24,9 +28,12 @@ namespace com.ethnicthv.Inner.Object.Piece
             _side = side;
             _id = _idCounter;
             _idCounter++;
+            _properties = PieceProperties.Provider.GetProperties(type);
         }
         
         public IPiece Outer { get; protected internal set; }
+        
+        public PieceProperties PieceProperties => _properties;
 
         public void SetMovable(bool movable)
         {
