@@ -37,7 +37,7 @@
     "range": 1,
     "move_range": 2,
     "cost_per_move": 1,
-    "move_type": "Straight"
+    "move_type": "Normal"
   },
   "Queen": {
     "name": "Queen",

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using com.ethnicthv.Inner.Object.Piece.Exception;
+using com.ethnicthv.Outer.Behaviour.Piece;
 using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Object.Piece.Action
@@ -51,5 +52,29 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
                 throw new ArgumentOutOfRangeException();
             }
         }
+
+        public static ActionFunction DefaultMove = (p, d) =>
+        {
+            Debug.Log("DefaultMove: Called");
+            if (!p.IsMovable()) return;
+            Debug.Log("DefaultMove: Piece isMovable");
+            var board = GameManagerInner.Instance.Board;
+
+            Debug.Assert(d.Length == 2);
+            Debug.Assert(d[0] is IPiece);
+            Debug.Assert(d[1] is (int, int));
+            var controller = (IPiece)d[0];
+            var targetPosition = ((int, int))d[1];
+            var currentPosition = board.GetPiecePosition(p);
+            Debug.Log("DefaultMove: Getting Data Complete");
+
+            var target = board[targetPosition];
+            Debug.Log("DefaultMove: Target: " + target);
+            if (target != null) return;
+
+            Debug.Log("DefaultMove: Calling MovePiece");
+            board.MovePiece(controller, currentPosition.Item1, currentPosition.Item2, targetPosition.Item1,
+                targetPosition.Item2);
+        };
     }
 }

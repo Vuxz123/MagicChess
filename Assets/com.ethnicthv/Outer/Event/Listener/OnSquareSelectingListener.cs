@@ -14,8 +14,8 @@ namespace com.ethnicthv.Outer.Event.Listener
     [EventListener(typeof(OnSquareSelectingEvent))]
     public class OnSquareSelectedListener
     {
-        private readonly List<ISquare> _selectedSquares = new();
-        private readonly List<ISquare> _possibleMoves = new();
+        private static readonly List<ISquare> _selectedSquares = new();
+        private static readonly List<ISquare> _possibleMoves = new();
 
         [LocalHandler]
         public bool HandleEventLocal(OnSquareSelectingEvent e)
@@ -49,7 +49,7 @@ namespace com.ethnicthv.Outer.Event.Listener
                 {
                     Debug.Log("OSSHandler: Possible move: " + temp);
                     var s = GameManagerOuter.Instance.ChessBoard.GetSquare(temp.Item1, temp.Item2);
-                    //if(s.HasPiece()) continue;
+                    if(s.HasPiece()) continue;
                     s.Highlight(Color.green);
                     _possibleMoves.Add(s);
                 }
@@ -86,7 +86,7 @@ namespace com.ethnicthv.Outer.Event.Listener
             return true;
         }
 
-        private void ClearHighlight()
+        private static void ClearHighlight()
         {
             foreach (var square in _selectedSquares)
             {
@@ -97,6 +97,11 @@ namespace com.ethnicthv.Outer.Event.Listener
                 square.UnHighlight();
             }
             _selectedSquares.Clear();
+        }
+        
+        public static void CancelSelecting()
+        {
+            ClearHighlight();
         }
     }
 }

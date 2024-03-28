@@ -28,7 +28,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
             if (!Physics.Raycast(ray, out var hit)) return;
             var hitObject = hit.collider.gameObject;
             if (!hitObject.CompareTag("ChessSquare")) return;
-            ISquare square = _chessBoard.GetSquare(hitObject);
+            var square = _chessBoard.GetSquare(hitObject);
             EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, new OnSquareSelectingEvent(square), @event => {});
         }
     }

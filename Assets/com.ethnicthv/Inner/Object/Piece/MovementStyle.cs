@@ -16,40 +16,105 @@ namespace com.ethnicthv.Inner.Object.Piece
                 // Add available moves
                 var p = (x + i * GetDirection(side), y);
                 //check if position is valid
-                if (p.Item1 >= 0 && p.Item1 < 8 && p.Item2 >= 0 && p.Item2 < 8)
-                    list.Add(p);
+                if (p.Item1 < 0 || p.Item1 >= 8 || p.Item2 < 0 || p.Item2 >= 8) continue;
+                //check if position has piece
+                //if it has piece, stop adding moves in this direction
+                if (GameManagerInner.Instance.Board[p.Item1, p.Item2] != null)
+                    break;
+                list.Add(p);
             }
-            Debug.Log($"MovementStyle: Straight: {list.Count} moves available.");
+            return list;
+        });
+        
+        public static readonly MovementStyle Normal = new("Normal", (side ,x, y, range) =>
+        {
+            var list = new List<(int, int)>();
+            
+            var directions = new List<(int, int)>
+            {
+                (1, 0),
+                (-1, 0),
+                (0, 1),
+                (0, -1)
+            };
+            
+            for (var di = 0; di < 4; di++)
+            {
+                var (dx, dy) = directions[di];
+                for(var i = 1; i <= range; i++)
+                {
+                    // Add available moves
+                    var p = (x + i * dx, y + i * dy);
+                    //check if position is valid
+                    if (p.Item1 < 0 || p.Item1 >= 8 || p.Item2 < 0 || p.Item2 >= 8) continue;
+                    //check if position has piece
+                    //if it has piece, stop adding moves in this direction
+                    if (GameManagerInner.Instance.Board[p.Item1, p.Item2] != null)
+                        break;
+                    list.Add(p);
+                }
+            }
+            
             return list;
         });
         
         public static readonly MovementStyle Diagonal = new("Diagonal", (side ,x, y, range) =>
         {
             var list = new List<(int, int)>();
-            for(var i = 1; i <= range; i++)
+            var directions = new List<(int, int)>
             {
-                // Add available moves
-                var p = (x + i * GetDirection(side), y + i * GetDirection(side));
-                //check if position is valid
-                if (p.Item1 >= 0 && p.Item1 < 8 && p.Item2 >= 0 && p.Item2 < 8)
+                (1, 1),
+                (-1, 1),
+                (1, -1),
+                (-1, -1)
+            };
+            for (var di = 0; di < 4; di++)
+            {
+                var (dx, dy) = directions[di];
+                for(var i = 1; i <= range; i++)
+                {
+                    // Add available moves
+                    var p = (x + i * dx, y + i * dy);
+                    //check if position is valid
+                    if (p.Item1 < 0 || p.Item1 >= 8 || p.Item2 < 0 || p.Item2 >= 8) continue;
+                    //check if position has piece
+                    //if it has piece, stop adding moves in this direction
+                    if (GameManagerInner.Instance.Board[p.Item1, p.Item2] != null)
+                        break;
                     list.Add(p);
-                p = (x - i * GetDirection(side), y + i * GetDirection(side));
-                if (p.Item1 >= 0 && p.Item1 < 8 && p.Item2 >= 0 && p.Item2 < 8)
-                    list.Add(p);
-                
-                p = (x + i * GetDirection(side), y - i * GetDirection(side));
-                if (p.Item1 >= 0 && p.Item1 < 8 && p.Item2 >= 0 && p.Item2 < 8)
-                    list.Add(p);
-                
-                p = (x - i * GetDirection(side), y - i * GetDirection(side));
-                if (p.Item1 >= 0 && p.Item1 < 8 && p.Item2 >= 0 && p.Item2 < 8)
-                    list.Add(p);
+                }
             }
             return list;
         });
         public static readonly MovementStyle L = new("L", (side ,x, y, range) =>
         {
             var list = new List<(int, int)>();
+            
+            var directions = new List<(int, int)>
+            {
+                (1, 2),
+                (-1, 2),
+                (1, -2),
+                (-1, -2),
+                (2, 1),
+                (-2, 1),
+                (2, -1),
+                (-2, -1)
+            };
+            
+            for (var di = 0; di < 8; di++)
+            {
+                var (dx, dy) = directions[di];
+                // Add available moves
+                var p = (x + dx, y + dy);
+                //check if position is valid
+                if (p.Item1 < 0 || p.Item1 >= 8 || p.Item2 < 0 || p.Item2 >= 8) continue;
+                //check if position has piece
+                //if it has piece, stop adding moves in this direction
+                if (GameManagerInner.Instance.Board[p.Item1, p.Item2] != null)
+                    continue;
+                list.Add(p);
+            }
 
             return list;
         });
@@ -57,7 +122,36 @@ namespace com.ethnicthv.Inner.Object.Piece
         public static readonly MovementStyle Both = new("Both", (side, x, y, range) =>
         {
             var list = new List<(int, int)>();
-
+            
+            var directions = new List<(int, int)>
+            {
+                (1, 0),
+                (-1, 0),
+                (0, 1),
+                (0, -1),
+                (1, 1),
+                (-1, 1),
+                (1, -1),
+                (-1, -1)
+            };
+            
+            for (var di = 0; di < 8; di++)
+            {
+                var (dx, dy) = directions[di];
+                for(var i = 1; i <= range; i++)
+                {
+                    // Add available moves
+                    var p = (x + i * dx, y + i * dy);
+                    //check if position is valid
+                    if (p.Item1 < 0 || p.Item1 >= 8 || p.Item2 < 0 || p.Item2 >= 8) continue;
+                    //check if position has piece
+                    //if it has piece, stop adding moves in this direction
+                    if (GameManagerInner.Instance.Board[p.Item1, p.Item2] != null)
+                        break;
+                    list.Add(p);
+                }
+            }
+            
             return list;
         });
 
@@ -92,6 +186,7 @@ namespace com.ethnicthv.Inner.Object.Piece
                 return style switch
                 {
                     "Straight" => Straight,
+                    "Normal" => Normal, // "Normal" is the default movement style
                     "Diagonal" => Diagonal,
                     "L" => L,
                     "Both" => Both,
