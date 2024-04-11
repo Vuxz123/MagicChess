@@ -1,5 +1,7 @@
 ﻿using com.ethnicthv.Inner.Object.Piece.Action;
+using com.ethnicthv.Inner.Object.Piece.Properties;
 using com.ethnicthv.Outer.Behaviour.Piece;
+using UnityEngine.Rendering.Universal.Internal;
 using Debug = com.ethnicthv.Util.Debug;
 
 namespace com.ethnicthv.Inner.Object.Piece
@@ -84,6 +86,11 @@ namespace com.ethnicthv.Inner.Object.Piece
         {
             PieceAction.GetPieceAction(_type).DoAction(type, this, data);
         }
+        
+        public void DealDamage(DamageSource damage)
+        {
+            _properties.Health.Damage(this, damage);
+        }
 
         public Type GetPieceType()
         {
@@ -111,14 +118,31 @@ namespace com.ethnicthv.Inner.Object.Piece
         }
     }
     
-    public enum  ActionType
+    public class  ActionType
     {
         /// <summary>
         /// Action type for move, accepts 3 parameters, Piece and (int, int) location
         /// </summary>
-        Move = 2,
-        Attack = 1,
-        Defend = 1,
-        Dead = 1
+        public static readonly ActionType Move = new ActionType("Move", 2);
+        public static readonly ActionType Attack = new ActionType("Attack", 2);
+        public static readonly ActionType Defend = new ActionType("Defend", 2);
+        public static readonly ActionType Dead = new ActionType("Dead", 2);
+
+        /// number of parameters
+        public readonly byte Np;
+
+        public readonly string Name;
+        
+        public ActionType(string name, int np)
+        {
+            Np = (byte)np;
+            Name = name;
+        }
+        
+        public override string ToString()
+        {
+            return Name;
+        }
+            
     }
 }

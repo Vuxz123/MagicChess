@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Threading.Tasks;
-using UnityEngine;
+using com.ethnicthv.Util.Event.Exception;
 
 namespace com.ethnicthv.Util.Event
 {
@@ -37,7 +36,6 @@ namespace com.ethnicthv.Util.Event
         {
             var type = typeof(T);
             if (!_handlers.ContainsKey(type)) return;
-            UnityEngine.Debug.Log(_handlers[type].Count);
             foreach (var handler in _handlers[type])
             {
                 try
@@ -47,7 +45,7 @@ namespace com.ethnicthv.Util.Event
                 catch (TargetInvocationException ex)
                 {
                     // Handle the exception
-                    UnityEngine.Debug.LogError($"An error occurred while handling event: {ex.InnerException}");
+                    throw new HandlerException("Error in handler", ex);
                 }
             }
             callback?.Invoke(e);

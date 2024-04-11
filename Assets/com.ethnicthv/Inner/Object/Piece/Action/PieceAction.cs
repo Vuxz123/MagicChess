@@ -9,7 +9,7 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
     public delegate void ActionFunction(Piece piece, params object[] data);
     public abstract class PieceAction
     {
-        private static Dictionary<Inner.Object.Piece.Piece.Type, PieceAction> TypeMap = new();
+        private static readonly Dictionary<Inner.Object.Piece.Piece.Type, PieceAction> TypeMap = new();
         
         public static PieceAction GetPieceAction(Inner.Object.Piece.Piece.Type type)
         {
@@ -42,9 +42,9 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
         {
             if (ActionMap.TryGetValue(type, out var actionFunction))
             {
-                if (data.Length != (int)type)
+                if (data.Length != type.Np)
                     throw new ActionParamNotMatchException(
-                        $"Action {type} requires {(int)type} parameters, but {data.Length} were given");
+                        $"Action {type} requires {type.Np} parameters, but {data.Length} were given");
                 actionFunction(piece, data);
             }
             else
@@ -53,7 +53,7 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
             }
         }
 
-        public static ActionFunction DefaultMove = (p, d) =>
+        protected static readonly ActionFunction DefaultMove = (p, d) =>
         {
             Debug.Log("DefaultMove: Called");
             if (!p.IsMovable()) return;
@@ -75,6 +75,52 @@ namespace com.ethnicthv.Inner.Object.Piece.Action
             Debug.Log("DefaultMove: Calling MovePiece");
             board.MovePiece(controller, currentPosition.Item1, currentPosition.Item2, targetPosition.Item1,
                 targetPosition.Item2);
+        };
+
+        protected static readonly ActionFunction DefaultAttack = (p, d) =>
+        {
+            Debug.Log("DefaultAttack: Called");
+            if (!p.IsAttackable()) return;
+            Debug.Log("DefaultAttack: Piece isAttackable");
+            var board = GameManagerInner.Instance.Board;
+
+            Debug.Assert(d.Length == 2);
+            Debug.Assert(d[0] is IPiece);
+            Debug.Assert(d[1] is (int, int));
+            var controller = (IPiece)d[0];
+            var targetPosition = ((int, int))d[1];
+            var currentPosition = board.GetPiecePosition(p);
+            Debug.Log("DefaultAttack: Getting Data Complete");
+
+            var target = board[targetPosition];
+            Debug.Log("DefaultAttack: Target: " + target);
+            if (target == null) return;
+
+            Debug.Log("DefaultAttack: Perform Attack");
+            //TODO: Attack
+        };
+
+        protected static readonly ActionFunction DefaultDefend = (p, d) =>
+        {
+            Debug.Log("DefaultDefend: Called");
+            if (!p.IsDefendable()) return;
+            Debug.Log(("DefaultDefend: Piece isDefendable"));
+            var board = GameManagerInner.Instance.Board;
+
+            Debug.Assert(d.Length == 2);
+            Debug.Assert(d[0] is IPiece);
+            Debug.Assert(d[1] is (int, int));
+            var controller = (IPiece)d[0];
+            var targetPosition = ((int, int))d[1];
+            var currentPosition = board.GetPiecePosition(p);
+            Debug.Log("DefaultDefend: Getting Data Complete");
+
+            var target = board[targetPosition];
+            Debug.Log("DefaultDefend: Target: " + target);
+            if (target == null) return;
+
+            Debug.Log("DefaultDefend: Perform Defend");
+            //TODO: Defend
         };
     }
 }

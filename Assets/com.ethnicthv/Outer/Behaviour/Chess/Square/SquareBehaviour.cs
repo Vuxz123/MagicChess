@@ -26,7 +26,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess.Square
             _highlightRenderer = _highlight.GetComponent<MeshRenderer>();
             var transform1 = transform;
             var position = transform1.position;
-            _highlight.transform.position = new Vector3(position.x,2.9f,position.z);
+            _highlight.transform.position = new Vector3(position.x,2.9075f,position.z);
             _highlight.SetActive(false);
         }
 

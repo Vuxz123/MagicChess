@@ -25,7 +25,9 @@ namespace com.ethnicthv.Inner.Event
             Move,
             Attack,
             Defend,
-            Die
+            Die,
+            Damage,
+            Heal
         }
 
         public override Packet PackEvent()

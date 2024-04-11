@@ -1,0 +1,7 @@
+﻿{
+  "safeMechanism": {
+    "queueSize": 10,
+    "enqueuedTimeout": 10,
+    "dequeueTimeout": 0
+  }
+}

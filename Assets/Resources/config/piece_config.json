@@ -7,7 +7,12 @@
     "range": 1,
     "move_range": 2,
     "cost_per_move": 1,
-    "move_type": "L"
+    "move_type": "L",
+    "attack_type": "Spear",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   },
   "Pawn": {
     "name": "Pawn",
@@ -17,7 +22,12 @@
     "range": 1,
     "move_range": 1,
     "cost_per_move": 1,
-    "move_type": "Straight"
+    "move_type": "Straight",
+    "attack_type": "Sword",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   },
   "Bishop": {
     "name": "Bishop",
@@ -27,7 +37,12 @@
     "range": 2,
     "move_range": 16,
     "cost_per_move": 1,
-    "move_type": "Diagonal"
+    "move_type": "Diagonal",
+    "attack_type": "Spear",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   },
   "Rook": {
     "name": "Rook",
@@ -37,7 +52,12 @@
     "range": 1,
     "move_range": 2,
     "cost_per_move": 1,
-    "move_type": "Normal"
+    "move_type": "Normal",
+    "attack_type": "Sword",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   },
   "Queen": {
     "name": "Queen",
@@ -47,7 +67,12 @@
     "range": 2,
     "move_range": 16,
     "cost_per_move": 1,
-    "move_type": "Both"
+    "move_type": "Both",
+    "attack_type": "Spear",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   },
   "King": {
     "name": "King",
@@ -57,6 +82,11 @@
     "range": 1,
     "move_range": 1,
     "cost_per_move": 1,
-    "move_type": "Both"
+    "move_type": "Both",
+    "attack_type": "Sword",
+    "magic_damage": 5,
+    "magic_defence": 5,
+    "armor_penetration": 5,
+    "magic_penetration": 5
   }
 }

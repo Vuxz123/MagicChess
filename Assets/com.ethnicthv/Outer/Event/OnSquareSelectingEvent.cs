@@ -5,13 +5,11 @@ namespace com.ethnicthv.Outer.Event
 {
     public class OnSquareSelectingEvent : ethnicthv.Util.Event.Event
     {
-        private ISquare _square;
-        
-        public ISquare Square => _square;
-        
+        public ISquare Square { get; }
+
         public OnSquareSelectingEvent(ISquare square)
         {
-            _square = square;
+            Square = square;
         }
         
         public override Packet PackEvent()

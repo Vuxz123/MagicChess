@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
-using com.ethnicthv.Outer.Behaviour.Piece;
 using com.ethnicthv.Util.Event;
 using UnityEngine;
 using Debug = com.ethnicthv.Util.Debug;
@@ -14,17 +14,51 @@ namespace com.ethnicthv.Outer.Event.Listener
     [EventListener(typeof(OnSquareSelectingEvent))]
     public class OnSquareSelectedListener
     {
-        private static readonly List<ISquare> _selectedSquares = new();
-        private static readonly List<ISquare> _possibleMoves = new();
+        private static readonly List<ISquare> SelectedSquares = new();
+        private static readonly List<ISquare> PossibleMoves = new();
+        
+        private static readonly object _lock = new object();
+        private static bool _isSelecting;
+        private static SelectingAction _action;
+
+        public static SelectingAction Action
+        {
+            get => _action;
+            set
+            {
+                lock (_lock)
+                {
+                    if(_isSelecting) return;
+                    _action = value;
+                }
+            }
+        }
 
         [LocalHandler]
         public bool HandleEventLocal(OnSquareSelectingEvent e)
         {
+            return Action switch
+            {
+                SelectingAction.Move => HandleMove(e),
+                SelectingAction.Attack => HandleAttack(e),
+                SelectingAction.Defend => HandleDefend(e),
+                _ => false
+            };
+        }
+
+        private static bool HandleDefend(OnSquareSelectingEvent onSquareSelectingEvent)
+        {
+            return false;
+        }
+
+        private static bool HandleMove(OnSquareSelectingEvent e)
+        {
             Debug.Log("OSSHandler: " + e);
             // If there is no selected square
             // Select the square and highlight possible moves
-            if (_selectedSquares.Count == 0)
+            if (SelectedSquares.Count == 0)
             {
+                _isSelecting = true;
                 Debug.Log("OSSHandler: First selection");
                 Debug.Log("OSSHandler: HasPiece: " + e.Square.HasPiece());
                 if (!e.Square.HasPiece())
@@ -34,7 +68,7 @@ namespace com.ethnicthv.Outer.Event.Listener
 
                 var piece = GameManagerOuter.Instance.ChessBoard.GetPiece(e.Square.Pos);
                 var pieceProperties = piece.Inner.PieceProperties;
-                Debug.Log("OSSHandler: Piece: " + pieceProperties.MovementStyle.ToString());
+                Debug.Log("OSSHandler: Piece: " + pieceProperties.MovementStyle);
                 var ip = GameManagerInner.ConvertOuterToInnerPos(e.Square.Pos);
                 Debug.Log("OSSHandler: Inner pos: " + ip);
                 var possibleMoves = pieceProperties.MovementStyle
@@ -51,24 +85,92 @@ namespace com.ethnicthv.Outer.Event.Listener
                     var s = GameManagerOuter.Instance.ChessBoard.GetSquare(temp.Item1, temp.Item2);
                     if(s.HasPiece()) continue;
                     s.Highlight(Color.green);
-                    _possibleMoves.Add(s);
+                    PossibleMoves.Add(s);
                 }
-                _selectedSquares.Add(e.Square);
+                SelectedSquares.Add(e.Square);
                 e.Square.Highlight(Color.yellow);
             }
             else
             {
                 Debug.Log("OSSHandler: Second selection");
                 if (e.Square.HasPiece()) return false;
-                if (!_possibleMoves.Contains(e.Square)) return false;   
+                if (!PossibleMoves.Contains(e.Square)) return false;   
                 Debug.Log("OSSHandler: Confirm move: " + e.Square.Pos);
-                var ipiece = GameManagerInner.Instance.Board[
-                    GameManagerInner.ConvertOuterToInnerPos(_selectedSquares[0].Pos)
+                var iPiece = GameManagerInner.Instance.Board[
+                    GameManagerInner.ConvertOuterToInnerPos(SelectedSquares[0].Pos)
                 ].Outer;
                 try
                 {
-                    ipiece.DoAction(ActionType.Move,
-                        ipiece,
+                    iPiece.DoAction(ActionType.Move,
+                        iPiece,
+                        GameManagerInner.ConvertOuterToInnerPos(e.Square.Pos)
+                    );
+                }
+                catch (Exception exception)
+                {
+                    Debug.LogException(exception);
+                    throw;
+                }
+
+                Debug.Log("OSSHandler: Move done");
+                Finish();
+                Debug.Log("OSSHandler: Clear highlight");
+            }
+            
+            return true;
+        }
+
+        private static bool HandleAttack(OnSquareSelectingEvent e)
+        {
+            Debug.Log("OSSHandler: " + e);
+            // If there is no selected square
+            // Select the square and highlight possible moves
+            
+            if (SelectedSquares.Count == 0)
+            {
+                _isSelecting = true;
+                Debug.Log("OSSHandler: First selection");
+                Debug.Log("OSSHandler: HasPiece: " + e.Square.HasPiece());
+                if (!e.Square.HasPiece())
+                {
+                    return false;
+                }
+
+                var piece = GameManagerOuter.Instance.ChessBoard.GetPiece(e.Square.Pos);
+                var pieceProperties = piece.Inner.PieceProperties;
+                Debug.Log("OSSHandler: Piece: " + pieceProperties.MovementStyle);
+                var ip = GameManagerInner.ConvertOuterToInnerPos(e.Square.Pos);
+                Debug.Log("OSSHandler: Inner pos: " + ip);
+                var possibleAttacks = pieceProperties.AttackType
+                    .GetAvailableAttacks(
+                        piece.Inner.side,
+                        ip.Item1,
+                        ip.Item2,
+                        pieceProperties.MovementRange
+                    );
+                Debug.Log($"OSSHandler: {possibleAttacks.Count} Possible moves: ");
+                foreach (var temp in possibleAttacks.Select(GameManagerOuter.ConvertInnerToOuterPos))
+                {
+                    Debug.Log("OSSHandler: Possible move: " + temp);
+                    var s = GameManagerOuter.Instance.ChessBoard.GetSquare(temp.Item1, temp.Item2);
+                    s.Highlight(Color.green);
+                    PossibleMoves.Add(s);
+                }
+                SelectedSquares.Add(e.Square);
+                e.Square.Highlight(Color.yellow);
+            }
+            else
+            {
+                Debug.Log("OSSHandler: Second selection");
+                if (!PossibleMoves.Contains(e.Square)) return false;   
+                Debug.Log("OSSHandler: Confirm move: " + e.Square.Pos);
+                var iPiece = GameManagerInner.Instance.Board[
+                    GameManagerInner.ConvertOuterToInnerPos(SelectedSquares[0].Pos)
+                ].Outer;
+                try
+                {
+                    iPiece.DoAction(ActionType.Attack,
+                        iPiece,
                         GameManagerInner.ConvertOuterToInnerPos(e.Square.Pos)
                     );
                 }
@@ -83,25 +185,39 @@ namespace com.ethnicthv.Outer.Event.Listener
                 Debug.Log("OSSHandler: Clear highlight");
             }
             
-            return true;
+            return false;
         }
 
         private static void ClearHighlight()
         {
-            foreach (var square in _selectedSquares)
+            foreach (var square in SelectedSquares)
             {
                 square.UnHighlight();
             }
-            foreach (var square in _possibleMoves)
+            foreach (var square in PossibleMoves)
             {
                 square.UnHighlight();
             }
-            _selectedSquares.Clear();
+            SelectedSquares.Clear();
+        }
+
+        private static void Finish()
+        {
+            _isSelecting = false;
+            ClearHighlight();
         }
         
         public static void CancelSelecting()
         {
+            _isSelecting = false;
             ClearHighlight();
+        }
+
+        public enum SelectingAction
+        {
+            Move,
+            Attack,
+            Defend,
         }
     }
 }

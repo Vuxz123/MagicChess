@@ -1,4 +1,6 @@
-﻿namespace com.ethnicthv.Util
+﻿using System;
+
+namespace com.ethnicthv.Util
 {
     public static class Debug
     {
@@ -23,6 +25,14 @@
             if (GameManager.IsDebug)
             {
                 UnityEngine.Debug.LogError(message);
+            }
+        }
+        
+        public static void LogError(Exception exception)
+        {
+            if (GameManager.IsDebug)
+            {
+                UnityEngine.Debug.LogError(exception);
             }
         }
         

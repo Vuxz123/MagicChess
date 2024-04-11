@@ -26,8 +26,15 @@ namespace com.ethnicthv
             _gameManagerInner.GameManagerOuter = _gameManagerOuter;
             
             EventManager.Instance.Init();
+            
+            SafeMechanism.Init();
         }
-        
+
+        private void FixedUpdate()
+        {
+            SafeMechanism.Instance.DrainDispatchQueue();
+        }
+
         public static bool IsOnMainThread()
         {
             return System.Threading.Thread.CurrentThread.ManagedThreadId == _mainThreadId;
