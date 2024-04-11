@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 
 namespace com.ethnicthv.Util.Networking
 {
+    //TODO: Rewrite this class to be compatible with adding bits (Current not work after adding bits)
     public class PacketWriter
     {
-        private List<byte> _bytes;
+        private byte[] _bytes;
         private int _length;
 
         private PacketWriter()
         {
-            _bytes = new List<byte>();
+            _bytes = Array.Empty<byte>();
             _length = 0;
         }
         
@@ -28,7 +31,8 @@ namespace com.ethnicthv.Util.Networking
         
         public PacketWriter Write(byte b)
         {
-            _bytes.Add(b);
+            byte[] temp = {b};
+            _bytes.AddRange(temp);
             _length += 8;
             return this;
         }
@@ -78,8 +82,26 @@ namespace com.ethnicthv.Util.Networking
         
         public PacketWriter Write(bool b)
         {
-            _bytes.Add((byte) (b ? 1 : 0));
-            _length += 1;
+            return Write(b ? (byte) 1 : (byte) 0);
+        }
+        
+        public PacketWriter WriterBits(byte bits, int length)
+        {
+            if(length is < 1 or > 8)
+                throw new ArgumentException("Length must be from 1 to 8");
+
+            BytesUtil.AppendByte( bits , _bytes, _length, length);
+            
+            _length += length;
+            return this;
+        }
+        
+        public PacketWriter WriterBits(byte[] bits, int length)
+        {
+            if(length is < 1 or > 8)
+                throw new ArgumentException("Length must be from 1 to 8");
+            
+            _length += length;
             return this;
         }
         

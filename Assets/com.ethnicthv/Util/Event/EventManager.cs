@@ -48,7 +48,7 @@ namespace com.ethnicthv.Util.Event
                     var methods = ReflectionHelper.GetMethodsWithAttribute<LocalHandlerAttribute>(listener);
                     foreach (var method in methods)
                     {
-                        UnityEngine.Debug.Log("Local" + method.ToSafeString());
+                        UnityEngine.Debug.Log("Local: " + method.ToSafeString());
                         var handler =
                             method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
                                 activator);
@@ -73,7 +73,7 @@ namespace com.ethnicthv.Util.Event
                     var methods = ReflectionHelper.GetMethodsWithAttribute<ServerNetworkingHandlerAttribute>(listener);
                     foreach (var method in methods)
                     {
-                        UnityEngine.Debug.Log("Server" + method.ToSafeString());
+                        UnityEngine.Debug.Log("Server: " + method.ToSafeString());
                         var handler =
                             method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
                                 activator);
@@ -197,7 +197,7 @@ namespace com.ethnicthv.Util.Event
 
         private SafeMechanism()
         {
-            var safeMechanismConfig = ConfigProvider.GetConfig().GetSafeMechanismConfig();
+            var safeMechanismConfig = ConfigProvider.GetConfig().SafeMechanismConfig;
             _blockingCollection = new BlockingCollection<SafeDispatchData>(
                 safeMechanismConfig.QueueSize
                 );

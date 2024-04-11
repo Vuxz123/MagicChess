@@ -26,14 +26,20 @@ namespace com.ethnicthv
         private bool _isDirty = true;
         private void Start()
         {
-            int b = 0b_1000_1000_1000_1000;
-            byte a = 0b_1111_1000;
-            byte c = 0b_101;
-            byte test = 0b_0000_11;
-		
-            byte d = BytesUtil.AppendByte(c, a, 4, 3);
-		
-            Debug.Log($"{Convert.ToString(d, toBase: 2)}");
+            byte a = 0b_0111_0001;
+            var v = new byte[]
+            {
+                0b_0000_0000,
+                0b_0000_0111,
+            };
+
+            const byte add = 0b_111;
+            
+            var temp = BytesUtil.AppendByte(add , v, 15, 3);
+            foreach (var t in temp)
+            {
+                Debug.Log($"Temp: {Convert.ToString(t, toBase: 2).PadLeft(8, '0')}");
+            }
         }
 
         private void Update()

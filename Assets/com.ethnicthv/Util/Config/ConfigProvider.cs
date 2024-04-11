@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using com.ethnicthv.Util.Config.Exception;
+using Newtonsoft.Json;
 using UnityEngine;
-using YamlDotNet.Serialization;
 
 namespace com.ethnicthv.Util.Config
 {
@@ -13,74 +14,23 @@ namespace com.ethnicthv.Util.Config
         {
             if (_config != null) return _config;
             var json = Resources.Load<TextAsset>("config/config").text;
-            var data = JsonUtility.FromJson<Dictionary<string, object>>(json);
-            _config = new Config(data);
+            _config = JsonConvert.DeserializeObject<Config>(json);
             return _config;
         }
+
+        public static void Init()
+        {
+            GetConfig();
+        }
     }
-    
+
     public class Config
     {
-        private Dictionary<string, object> _config;
+        public SafeMechanismConfig SafeMechanismConfig { get; set; }
 
-        public Config(Dictionary<string, object> config)
+        public Config()
         {
-            _config = config;
-        }
-
-        // public List<string> GetEventPaths()
-        // {
-        //     if (_config.TryGetValue("eventPaths", out var list))
-        //     {
-        //         switch (list)
-        //         {
-        //             case List<Dictionary<string, string>> listDict:
-        //             {
-        //                 var paths = new List<string>();
-        //             
-        //                 var error = 0;
-        //             
-        //                 foreach (var cell in listDict)
-        //                 {
-        //                     if (cell.TryGetValue("path", out var path))
-        //                     {
-        //                         paths.Add(path);
-        //                     }
-        //                     else
-        //                     {
-        //                         error++;
-        //                     }
-        //                 }
-        //                 if (error != 0)
-        //                 {
-        //                     Debug.LogError("Error in config.yml: " + error + " eventPaths");
-        //                 }
-        //
-        //                 return paths;
-        //             }
-        //             case List<string> paths:
-        //                 return paths;
-        //         }
-        //     }
-        //     else
-        //     {
-        //         Debug.LogError("Error in config.yml: eventPaths not found");
-        //     }
-        //     return null;
-        // }
-
-        public SafeMechanismConfig GetSafeMechanismConfig()
-        {
-            if (SafeMechanismConfig.GetConfig(out var safeMechanismConfig)) return safeMechanismConfig;
-            if(_config.TryGetValue("safeMechanism", out var safeMechanism))
-            {
-                return safeMechanism switch
-                {
-                    Dictionary<string, object> dict => new SafeMechanismConfig(dict),
-                    _ => throw new ConfigLoadFailException("safeMechanism in config.yml is not a dictionary")
-                };
-            }
-            throw new ConfigNotFoundException("safeMechanism not found in config.yml, please check the config.yml");
+            Debug.Log("Config loaded");
         }
     }
 }

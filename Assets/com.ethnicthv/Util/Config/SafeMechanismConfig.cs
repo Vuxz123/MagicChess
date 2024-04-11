@@ -4,38 +4,11 @@ namespace com.ethnicthv.Util.Config
 {
     public class SafeMechanismConfig
     {
-        //private static SafeMechanismConfig _config;
-
-        public static bool GetConfig(out SafeMechanismConfig config)
-        {
-            // if (_config != null)
-            // {
-            //     config = _config;
-            //     return true;
-            // }
-            // config = null;
-            config = null;
-            return false;
-        }
         
-        public readonly int QueueSize = 10;
-        public readonly int EnqueueTimeout = 10;
-        public readonly int DequeueTimeout;
+        public int QueueSize { get; set; } = 10;
+        public int EnqueueTimeout { get; set; } = 10;
+        public int DequeueTimeout { get; set; } = 0;
         
-        public SafeMechanismConfig(Dictionary<string, object> dict)
-        {
-            if (dict.TryGetValue("queueSize", out var queueSize))
-            {
-                QueueSize = (int) queueSize;
-            }
-            if (dict.TryGetValue("enqueueTimeout", out var enqueueTimeout))
-            {
-                EnqueueTimeout = (int) enqueueTimeout;
-            }
-            if (dict.TryGetValue("dequeueTimeout", out var dequeueTimeout))
-            {
-                DequeueTimeout = (int) dequeueTimeout;
-            }
-        }
+        public SafeMechanismConfig() { }
     }
 }

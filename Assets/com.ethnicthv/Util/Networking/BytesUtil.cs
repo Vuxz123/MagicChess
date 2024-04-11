@@ -119,7 +119,7 @@ namespace com.ethnicthv.Util.Networking
         /// byte array to be appended
         /// </param>
         /// <param name="ori">
-        /// byte array to be appended to
+        /// byte to be appended to
         /// </param>
         /// <param name="start">
         /// position to append the byte array (value can be from 0 to bytes2 length * 8 - 1)
@@ -130,31 +130,56 @@ namespace com.ethnicthv.Util.Networking
         /// <returns>
         /// the byte array after appending
         /// </returns>
-        public static byte[] AppendBytes(byte[] addition, byte[] ori, int start, int length)
+        public static byte[] AppendByte(byte addition, byte[] ori, int start, int length)
         {
             var oriMaxLength = ori.Length * 8;
             if (start > oriMaxLength - 1 || start < 0)
             {
                 throw new ArgumentException("Start must be from 0 to input length * 8 - 1");
             }
-
+            if (length is > 8 or < 1)
+            {
+                throw new ArgumentException("Length must be from 1 to 8");
+            }
+            if(ori.Length == 0)
+            {
+                var result = new[] { addition };
+                return result;   
+            }
             if (start + length > oriMaxLength)
             {
                 var result = new byte[(start + length + 7) / 8];
                 ori.CopyTo(result, 0);
 
+                var firstPart = result[^2];
+                Debug.Log($"First Part: {Convert.ToString(firstPart, toBase: 2).PadLeft(8, '0')}");
+                var secondPart = result[^1];
+                Debug.Log($"Second Part: {Convert.ToString(secondPart, toBase: 2).PadLeft(8, '0')}");
+                var firstPartAdditionLength = oriMaxLength - start;
+                Debug.Log($"First Part Addition Length: {firstPartAdditionLength}");
+                var secondPartAdditionLength = length - firstPartAdditionLength;
+                Debug.Log($"Second Part Addition Length: {secondPartAdditionLength}");
+                var temp =(byte) (addition << (8 - length));
+                var firstPartAddition = GetByte(temp, 0, firstPartAdditionLength);
+                Debug.Log($"First Part Addition: {Convert.ToString(firstPartAddition, toBase: 2).PadLeft(8, '0')}");
+                var secondPartAddition = GetByte(temp, firstPartAdditionLength, secondPartAdditionLength);
+                Debug.Log($"Second Part Addition: {Convert.ToString(secondPartAddition, toBase: 2).PadLeft(8, '0')}");
+                result[^2] = AppendByte(firstPartAddition, firstPart, start % 8, firstPartAdditionLength);
+                Debug.Log($"First Part After: {Convert.ToString(result[^2], toBase: 2).PadLeft(8, '0')}");
+                result[^1] = AppendByte(secondPartAddition, secondPart, 0, secondPartAdditionLength);
+                Debug.Log($"Second Part After: {Convert.ToString(result[^1], toBase: 2).PadLeft(8, '0')}");
                 return result;
             }
             else
             {
                 var result = new byte[ori.Length];
                 ori.CopyTo(result, 0);
-                // 
+                var insertPart = result[^1];
+                result[^1] = AppendByte(addition, insertPart, start, length);
+                return result;
             }
-
-            return null;
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -170,7 +195,7 @@ namespace com.ethnicthv.Util.Networking
             {
                 throw new ArgumentException("Start must be from 0 to 7");
             }
-            
+
             if (length is > 8 or < 1)
             {
                 throw new ArgumentException("Length must be from 1 to 8");
@@ -180,14 +205,15 @@ namespace com.ethnicthv.Util.Networking
             {
                 throw new ArgumentException("Sum of start and length must be less than or equal to 8");
             }
-            
-            var result = ori;
+
             var mask = CreateByteBitMask(start, length);
-            var n_mask = ~mask;
-            result = (byte)((result & n_mask) | ((addition << (8 - length)) & mask));
+            var nMask = (byte) ~mask;
+            var oriMasked = (byte)(ori & nMask);
+            var addMasked = (byte)(addition << (8 - length - start));
+            var result = (byte)(oriMasked | addMasked);
             return result;
         }
-        
+
         public static byte CreateByteBitMask(int start, int length)
         {
             // Check if start and length are valid
@@ -197,9 +223,9 @@ namespace com.ethnicthv.Util.Networking
             }
 
             // Create the mask
-            byte mask = (byte)(((1 << length) - 1) << start);
-
-            return mask;
+            var temp = (byte)(0xFF << (8 - length));
+            temp = (byte)(temp >> start);
+            return temp;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Outer;
+using com.ethnicthv.Util.Config;
 using com.ethnicthv.Util.Event;
 using UnityEngine;
 
@@ -20,10 +21,15 @@ namespace com.ethnicthv
             
             IsDebug = Debug.isDebugBuild;
             
+            #pragma warning disable CS0618 // Type or member is obsolete
             _gameManagerOuter = GameManagerOuter.instance;
             _gameManagerInner = GameManagerInner.instance;
+            #pragma warning restore CS0618 // Type or member is obsolete
+            
             _gameManagerOuter.GameManagerInner = _gameManagerInner;
             _gameManagerInner.GameManagerOuter = _gameManagerOuter;
+            
+            ConfigProvider.Init();
             
             EventManager.Instance.Init();
             
