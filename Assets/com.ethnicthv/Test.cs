@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Outer;
@@ -41,11 +42,11 @@ namespace com.ethnicthv
 
             const byte add = 0b_111;
             
-            var temp = BytesUtil.AppendBytes(a , v, 0, 11);
-            foreach (var t in temp)
-            {
-                Debug.Log($"Temp: {Convert.ToString(t, toBase: 2).PadLeft(8, '0')}");
-            }
+            // var temp = BytesUtil.AppendBytes(a , v, 0, 11);
+            // Debug.Log("Bytes: \n" + string.Join("\n", temp.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+
+            var packet = PacketWriter.Create().Write((byte)10).Write(false).Write(true).Write((short) 3103).GetPacket();
+            Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
         }
 
         private void Update()

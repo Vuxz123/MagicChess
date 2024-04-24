@@ -11,13 +11,15 @@ namespace com.ethnicthv.Util.Networking.Packet
     /// </summary>
     public class PacketWriter
     {
+        private static readonly Pool<PacketWriter> Pool = new(() => new PacketWriter());
+        
         private int _length;
 
         private Packet _p;
 
         private byte[] Bytes => _p.GetBytes();
-
-        private static readonly Pool<PacketWriter> Pool = new(() => new PacketWriter());
+        
+        private byte[] tempBytes = new byte[8];
 
         private PacketWriter()
         {
@@ -46,90 +48,69 @@ namespace com.ethnicthv.Util.Networking.Packet
             return writer;
         }
 
-        public PacketWriter Write(byte[] bytes, int length)
-        {
-            BytesUtil.AppendBytes(bytes, Bytes, _length, length);
-            _length += length;
-            return this;
-        }
-
         public PacketWriter Write(byte b)
         {
-            BytesUtil.AppendByte(b, Bytes, _length, 8);
-            _length += 8;
-            return this;
+            return WriteBits(b, 8);
         }
 
         public PacketWriter Write(short s)
         {
-            Bytes.AddRange(BitConverter.GetBytes(s));
-            _length += 16;
-            return this;
+            BytesUtil.ShortToBytes(s, tempBytes);
+            return WriteBits(tempBytes, 16);
         }
 
         public PacketWriter Write(int i)
         {
-            Bytes.AddRange(BitConverter.GetBytes(i));
-            _length += 32;
-            return this;
-        }
-
-        public PacketWriter Write(long l)
-        {
-            Bytes.AddRange(BitConverter.GetBytes(l));
-            _length += 64;
-            return this;
+            BytesUtil.IntToBytes(i, tempBytes);
+            Debug.Log("Temp Bytes: \n" + string.Join("\n", tempBytes.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            return WriteBits(tempBytes, 32);
         }
 
         public PacketWriter Write(float f)
         {
-            Bytes.AddRange(BitConverter.GetBytes(f));
-            _length += 32;
-            return this;
-        }
-
-        public PacketWriter Write(double d)
-        {
-            Bytes.AddRange(BitConverter.GetBytes(d));
-            _length += 64;
-            return this;
-        }
-
-        public PacketWriter Write(string str)
-        {
-            Write(str.Length);
-            Bytes.AddRange(System.Text.Encoding.ASCII.GetBytes(str));
-            _length += str.Length * 8;
-            return this;
+            BytesUtil.FloatToBytes(f, tempBytes);
+            return WriteBits(tempBytes, 32);
         }
 
         public PacketWriter Write(bool b)
         {
-            return Write(b ? (byte)1 : (byte)0);
+            return WriteBits(b? (byte) 0b_1000_0000 : (byte) 0, 1);
         }
 
-        public PacketWriter WriterBits(byte bits, int length)
+        public PacketWriter WriteBits(byte bits, int length)
         {
+            CheckWriteValidity(length);
             if (length is < 1 or > 8)
                 throw new ArgumentException("Length must be from 1 to 8");
-
             BytesUtil.AppendByte(bits, Bytes, _length, length);
-
             _length += length;
             return this;
         }
 
-        public PacketWriter WriterBits(byte[] bits, int length)
+        public PacketWriter WriteBits(byte[] bits, int length)
         {
-            if (length is < 1 or > 8)
-                throw new ArgumentException("Length must be from 1 to 8");
-
+            CheckWriteValidity(length);
+            Debug.Log("Bits: \n" + string.Join("\n", bits.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            var l = bits.Length * 8;
+            if (length < 1 || length > l )
+                throw new ArgumentException($"Length {l} must be from 1 to " + l);
+            BytesUtil.AppendBytes(bits, Bytes, _length, length);
             _length += length;
             return this;
+        }
+        
+        private void CheckWriteValidity(int length)
+        {
+            var remaining = 64 - _length;
+            if (length > remaining)
+                throw new ArgumentException($"Length {length} is exceeding the remaining space in the packet.");
+            if (length < 1)
+                throw new ArgumentException($"Length {length} must be greater than 0.");
         }
 
         public Packet GetPacket()
         {
+            Debug.Log(_length);
             lock (Pool)
             {
                 Pool.Return(this);

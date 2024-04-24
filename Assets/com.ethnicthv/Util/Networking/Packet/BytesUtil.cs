@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace com.ethnicthv.Util.Networking.Packet
 {
@@ -160,35 +161,35 @@ namespace com.ethnicthv.Util.Networking.Packet
                 var last2 = start / 8;
                 var last1 = last2 + 1;
                 var firstPart = ori[last2];
-                //Debug.Log($"First Part: {Convert.ToString(firstPart, toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"First Part: {Convert.ToString(firstPart, toBase: 2).PadLeft(8, '0')}");
                 var secondPart = ori[last1];
-                //Debug.Log($"Second Part: {Convert.ToString(secondPart, toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"Second Part: {Convert.ToString(secondPart, toBase: 2).PadLeft(8, '0')}");
                 var firstPartAdditionLength = last1 * 8 - start;
-                //Debug.Log($"First Part Addition Length: {firstPartAdditionLength}");
+                Debug.Log($"First Part Addition Length: {firstPartAdditionLength}");
                 var secondPartAdditionLength = length - firstPartAdditionLength;
-                //Debug.Log($"Second Part Addition Length: {secondPartAdditionLength}");
+                Debug.Log($"Second Part Addition Length: {secondPartAdditionLength}");
                 var temp = (byte)(addition << (8 - length));
                 var firstPartAddition = GetByte(temp, 0, firstPartAdditionLength);
-                //Debug.Log($"First Part Addition: {Convert.ToString(firstPartAddition, toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"First Part Addition: {Convert.ToString(firstPartAddition, toBase: 2).PadLeft(8, '0')}");
                 var secondPartAddition = GetByte(temp, firstPartAdditionLength, secondPartAdditionLength);
-                //Debug.Log($"Second Part Addition: {Convert.ToString(secondPartAddition, toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"Second Part Addition: {Convert.ToString(secondPartAddition, toBase: 2).PadLeft(8, '0')}");
                 ori[last2] = AppendByte(firstPartAddition, firstPart, start % 8, firstPartAdditionLength);
-                //Debug.Log($"First Part After: {Convert.ToString(ori[last2], toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"First Part After: {Convert.ToString(ori[last2], toBase: 2).PadLeft(8, '0')}");
                 ori[last1] = AppendByte(secondPartAddition, secondPart, 0, secondPartAdditionLength);
-                //Debug.Log($"Second Part After: {Convert.ToString(ori[last1], toBase: 2).PadLeft(8, '0')}");
+                Debug.Log($"Second Part After: {Convert.ToString(ori[last1], toBase: 2).PadLeft(8, '0')}");
                 return ori;
             }
             else
             {
                 var last1 = start / 8;
-                //Debug.Log("Append position: " + last1);
+                Debug.Log("Append position: " + last1);
                 var insertPart = ori[last1];
-                //Debug.Log("Insert Part: " + Convert.ToString(insertPart, toBase: 2).PadLeft(8, '0'));
-                //Debug.Log("Addition: " + Convert.ToString(addition, toBase: 2).PadLeft(8, '0'));
-                //Debug.Log("Start: " + start);
-                //Debug.Log("Length: " + length);
+                Debug.Log("Insert Part: " + Convert.ToString(insertPart, toBase: 2).PadLeft(8, '0'));
+                Debug.Log("Addition: " + Convert.ToString(addition, toBase: 2).PadLeft(8, '0'));
+                Debug.Log("Start: " + start);
+                Debug.Log("Length: " + length);
                 ori[last1] = AppendByte(addition, insertPart, start % 8, length);
-                //Debug.Log("Insert Part After: " + Convert.ToString(ori[last1], toBase: 2).PadLeft(8, '0'));
+                Debug.Log("Insert Part After: " + Convert.ToString(ori[last1], toBase: 2).PadLeft(8, '0'));
                 return ori;
             }
         }
@@ -218,18 +219,18 @@ namespace com.ethnicthv.Util.Networking.Packet
             {
                 throw new ArgumentException("Sum of start and length must be less than or equal to 8");
             }
-            
-            //Debug.Log("Addition: " + Convert.ToString(addition, toBase: 2).PadLeft(8, '0'));
+
+            Debug.Log("Addition: " + Convert.ToString(addition, toBase: 2).PadLeft(8, '0'));
             var mask = CreateByteBitMask(start, length);
-            //Debug.Log("Mask: " + Convert.ToString(mask, toBase: 2).PadLeft(8, '0'));
+            Debug.Log("Mask: " + Convert.ToString(mask, toBase: 2).PadLeft(8, '0'));
             var nMask = (byte)~mask;
-            //Debug.Log("Negative Mask: " + Convert.ToString(nMask, toBase: 2).PadLeft(8, '0'));
+            Debug.Log("Negative Mask: " + Convert.ToString(nMask, toBase: 2).PadLeft(8, '0'));
             var oriMasked = (byte)(ori & nMask);
-            //Debug.Log("Ori Masked: " + Convert.ToString(oriMasked, toBase: 2).PadLeft(8, '0'));
+            Debug.Log("Ori Masked: " + Convert.ToString(oriMasked, toBase: 2).PadLeft(8, '0'));
             var addMasked = (byte)(addition & mask);
-            ////Debug.Log("Add Masked: " + Convert.ToString(addMasked, toBase: 2).PadLeft(8, '0'));
+            Debug.Log("Add Masked: " + Convert.ToString(addMasked, toBase: 2).PadLeft(8, '0'));
             var result = (byte)(oriMasked | addMasked);
-            ////Debug.Log("Result: " + Convert.ToString(result, toBase: 2).PadLeft(8, '0'));
+            Debug.Log("Result: " + Convert.ToString(result, toBase: 2).PadLeft(8, '0'));
             return result;
         }
 
@@ -239,14 +240,14 @@ namespace com.ethnicthv.Util.Networking.Packet
             var oriMaxLength = ori.Length * 8;
             if (start > oriMaxLength - 1 || start < 0)
             {
-                throw new ArgumentException("Start must be from 0 to input length * 8 - 1");
+                throw new ArgumentException($"Start {start} must be from 0 to {(oriMaxLength - 1)}");
             }
 
             // check length
-            var maxAppendLength = length - start;
+            var maxAppendLength = oriMaxLength - start;
             if (length > maxAppendLength || length < 1)
             {
-                throw new ArgumentException("Length must be from 1 to " + maxAppendLength);
+                throw new ArgumentException($"Length {length} must be from 1 to " + maxAppendLength);
             }
 
             // for each byte in the addition, add it to the ori
@@ -254,16 +255,17 @@ namespace com.ethnicthv.Util.Networking.Packet
             var tempLength = length;
             foreach (var a in addition)
             {
-                //Debug.Log($"Compare {tempLength} and {8} from {length}");
+                Debug.Log($"Compare {tempLength} and {8} from {length}");
                 var l = Math.Min(tempLength, 8);
                 ori = AppendByte(a, ori, tempStart, l);
                 tempStart += l;
+                // subtract the remain input length by 8 when the length is greater than 8
                 tempLength -= 8;
-                //Debug.Log("New length: " + tempLength);
-                foreach (var t in ori)
-                {
-                    //Debug.Log($"Append Byte {Convert.ToString(a, toBase: 2).PadLeft(8, '0')}: {Convert.ToString(t, toBase: 2).PadLeft(8, '0')});
-                }
+                Debug.Log("New length: " + tempLength);
+                Debug.Log(
+                    "Append Byte: \n" + string.Join("\n", ori.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+                // if the remain input length is 0, break the loop
+                if (tempLength <= 0) break;
             }
 
             return ori;
@@ -281,6 +283,26 @@ namespace com.ethnicthv.Util.Networking.Packet
             var temp = (byte)(0xFF << (8 - length));
             temp = (byte)(temp >> start);
             return temp;
+        }
+
+        public static void IntToBytes(int i, byte[] bytes)
+        {
+            bytes[0] = (byte)(i >> 24);
+            bytes[1] = (byte)(i >> 16);
+            bytes[2] = (byte)(i >> 8);
+            bytes[3] = (byte)i;
+        }
+
+        public static void ShortToBytes(short s, byte[] bytes)
+        {
+            bytes[0] = (byte)(s >> 8);
+            bytes[1] = (byte)s;
+        }
+
+        public static void FloatToBytes(float f, byte[] bytes)
+        {
+            var i = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
+            IntToBytes(i, bytes);
         }
     }
 }
