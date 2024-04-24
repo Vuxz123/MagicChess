@@ -1,114 +1,140 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 
-namespace com.ethnicthv.Util.Networking
+namespace com.ethnicthv.Util.Networking.Packet
 {
     //TODO: Rewrite this class to be compatible with adding bits (Current not work after adding bits)
+    
+    /// <summary>
+    /// Thread-Safe PacketWriter class that can be used to write data to a Packet object. <br/>
+    /// </summary>
     public class PacketWriter
     {
-        private byte[] _bytes;
         private int _length;
+
+        private Packet _p;
+
+        private byte[] Bytes => _p.GetBytes();
+
+        private static readonly Pool<PacketWriter> Pool = new(() => new PacketWriter());
 
         private PacketWriter()
         {
-            _bytes = Array.Empty<byte>();
             _length = 0;
         }
-        
+
+        /// <summary>
+        /// Return a PacketWriter object from the pool. <br/>
+        /// This is Thread-Safe.
+        /// </summary>
         public static PacketWriter Create()
         {
-            return new PacketWriter();
+            PacketWriter writer;
+            
+            // Take a PacketWriter from the pool
+            // If pool is empty, generate a new PacketWriter
+            // lock is used for thread safety
+            lock (Pool)
+            {
+                writer = Pool.Take();
+            }
+            
+            // Create a new Packet object for the PacketWriter
+            writer._p = Packet.Create();
+
+            return writer;
         }
-        
-        public PacketWriter Write(byte[] bytes)
+
+        public PacketWriter Write(byte[] bytes, int length)
         {
-            _bytes.AddRange(bytes);
-            _length += bytes.Length * 8;
+            BytesUtil.AppendBytes(bytes, Bytes, _length, length);
+            _length += length;
             return this;
         }
-        
+
         public PacketWriter Write(byte b)
         {
-            byte[] temp = {b};
-            _bytes.AddRange(temp);
+            BytesUtil.AppendByte(b, Bytes, _length, 8);
             _length += 8;
             return this;
         }
-        
+
         public PacketWriter Write(short s)
         {
-            _bytes.AddRange(BitConverter.GetBytes(s));
+            Bytes.AddRange(BitConverter.GetBytes(s));
             _length += 16;
             return this;
         }
-        
+
         public PacketWriter Write(int i)
         {
-            _bytes.AddRange(BitConverter.GetBytes(i));
+            Bytes.AddRange(BitConverter.GetBytes(i));
             _length += 32;
             return this;
         }
-        
+
         public PacketWriter Write(long l)
         {
-            _bytes.AddRange(BitConverter.GetBytes(l));
+            Bytes.AddRange(BitConverter.GetBytes(l));
             _length += 64;
             return this;
         }
-        
+
         public PacketWriter Write(float f)
         {
-            _bytes.AddRange(BitConverter.GetBytes(f));
+            Bytes.AddRange(BitConverter.GetBytes(f));
             _length += 32;
             return this;
         }
-        
+
         public PacketWriter Write(double d)
         {
-            _bytes.AddRange(BitConverter.GetBytes(d));
+            Bytes.AddRange(BitConverter.GetBytes(d));
             _length += 64;
             return this;
         }
-        
+
         public PacketWriter Write(string str)
         {
             Write(str.Length);
-            _bytes.AddRange(System.Text.Encoding.ASCII.GetBytes(str));
+            Bytes.AddRange(System.Text.Encoding.ASCII.GetBytes(str));
             _length += str.Length * 8;
             return this;
         }
-        
+
         public PacketWriter Write(bool b)
         {
-            return Write(b ? (byte) 1 : (byte) 0);
+            return Write(b ? (byte)1 : (byte)0);
         }
-        
+
         public PacketWriter WriterBits(byte bits, int length)
         {
-            if(length is < 1 or > 8)
+            if (length is < 1 or > 8)
                 throw new ArgumentException("Length must be from 1 to 8");
 
-            BytesUtil.AppendByte( bits , _bytes, _length, length);
-            
+            BytesUtil.AppendByte(bits, Bytes, _length, length);
+
             _length += length;
             return this;
         }
-        
+
         public PacketWriter WriterBits(byte[] bits, int length)
         {
-            if(length is < 1 or > 8)
+            if (length is < 1 or > 8)
                 throw new ArgumentException("Length must be from 1 to 8");
-            
+
             _length += length;
             return this;
         }
-        
+
         public Packet GetPacket()
         {
-            return new Packet(_bytes.ToArray());
+            lock (Pool)
+            {
+                Pool.Return(this);
+            }
+            return _p;
         }
-        
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace com.ethnicthv.Util.Networking
+﻿namespace com.ethnicthv.Util.Networking.Packet
 {
     public class PacketReader
     {

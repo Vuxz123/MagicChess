@@ -1,4 +1,4 @@
-﻿using com.ethnicthv.Util.Networking;
+﻿using com.ethnicthv.Util.Networking.Packet;
 
 namespace com.ethnicthv.Outer.Event
 {

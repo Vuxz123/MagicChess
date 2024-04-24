@@ -1,5 +1,5 @@
 ﻿using com.ethnicthv.Outer.Behaviour.Chess.Square;
-using com.ethnicthv.Util.Networking;
+using com.ethnicthv.Util.Networking.Packet;
 
 namespace com.ethnicthv.Outer.Event
 {

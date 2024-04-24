@@ -9,6 +9,8 @@ namespace com.ethnicthv.Util.Config
         public int EnqueueTimeout { get; set; } = 10;
         public int DequeueTimeout { get; set; } = 0;
         
+        public uint PoolSize { get; set; } = 0;
+        
         public SafeMechanismConfig() { }
     }
 }

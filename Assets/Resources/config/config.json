@@ -1,7 +1,8 @@
 ﻿{
   "SafeMechanismConfig": {
-    "queueSize": 10,
-    "enqueuedTimeout": 10,
-    "dequeueTimeout": 0
+    "QueueSize": 10,
+    "EnqueuedTimeout": 10,
+    "DequeueTimeout": 0,
+    "PoolSize": 0
   }
 }

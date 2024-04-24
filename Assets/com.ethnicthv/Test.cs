@@ -5,7 +5,7 @@ using com.ethnicthv.Outer;
 using com.ethnicthv.Outer.Event;
 using com.ethnicthv.Outer.Event.Listener;
 using com.ethnicthv.Outer.Util.Camera;
-using com.ethnicthv.Util.Networking;
+using com.ethnicthv.Util.Networking.Packet;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -26,16 +26,22 @@ namespace com.ethnicthv
         private bool _isDirty = true;
         private void Start()
         {
-            byte a = 0b_0111_0001;
+            var a = new byte[]
+            {
+                0b_0111_0001,
+                0b_1110_0001,
+            };
             var v = new byte[]
             {
                 0b_0000_0000,
                 0b_0000_0111,
+                0b_1101_1010,
+                0b_1111_1001,
             };
 
             const byte add = 0b_111;
             
-            var temp = BytesUtil.AppendByte(add , v, 15, 3);
+            var temp = BytesUtil.AppendBytes(a , v, 0, 11);
             foreach (var t in temp)
             {
                 Debug.Log($"Temp: {Convert.ToString(t, toBase: 2).PadLeft(8, '0')}");

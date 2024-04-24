@@ -170,7 +170,7 @@ namespace com.ethnicthv.Util.Event
 
             //Assert e not null
             Assert.IsNotNull(e);
-            SafeMechanism.Instance.Enqueue(handlerType, e);
+            SafeMechanism.Enqueue<T>(handlerType, e);
         }
     }
 
@@ -195,17 +195,30 @@ namespace com.ethnicthv.Util.Event
         private readonly int _et;
         private readonly int _dt;
 
+        private readonly Pool<SafeDispatchData> _pool;
+
         private SafeMechanism()
         {
             var safeMechanismConfig = ConfigProvider.GetConfig().SafeMechanismConfig;
             _blockingCollection = new BlockingCollection<SafeDispatchData>(
                 safeMechanismConfig.QueueSize
-                );
+            );
 
             _et = safeMechanismConfig.EnqueueTimeout;
             _dt = safeMechanismConfig.DequeueTimeout;
+
+            _pool = new Pool<SafeDispatchData>(safeMechanismConfig.PoolSize, () => new SafeDispatchData(default, null));
         }
-        
+
+        /// <summary>
+        /// A Static version of Enqueue method that can be called from any thread. <br/>
+        /// This method is for life easier when calling from a static context.
+        /// </summary>
+        public static void Enqueue<T>(EventManager.HandlerType handlerType, T e) where T : Event
+        {
+            Instance.Enqueue(handlerType, e);
+        }
+
         public void Enqueue(EventManager.HandlerType handlerType, Event e)
         {
             if (GameManager.IsOnMainThread())
@@ -214,7 +227,18 @@ namespace com.ethnicthv.Util.Event
                     "SafeDispatchEvent should not be called from the main thread. Use DispatchEvent instead.");
             }
 
-            _blockingCollection.TryAdd(new SafeDispatchData(handlerType, e), _et);
+            SafeDispatchData data;
+
+            //Get data from pool
+            //If the pool is empty, a new instance will be created
+            lock (_pool)
+            {
+                data = _pool.Take();
+                data.Type = handlerType;
+                data.E = e;
+            }
+
+            _blockingCollection.TryAdd(data, _et);
         }
 
         /// <summary>
@@ -231,18 +255,23 @@ namespace com.ethnicthv.Util.Event
                 if (_blockingCollection.TryTake(out var data, _dt))
                 {
                     EventManager.Instance.DispatchEvent(data.Type, data.E);
+
+                    //Return data to pool
+                    //This is to prevent memory leak
+                    //If the pool is full, the data will be discarded
+                    lock (_pool)
+                    {
+                        _pool.Return(data);
+                    }
                 }
-                else
-                {
-                    break;
-                }
+                else break;
             }
         }
 
         private class SafeDispatchData
         {
-            internal readonly EventManager.HandlerType Type;
-            internal readonly Event E;
+            internal EventManager.HandlerType Type;
+            internal Event E;
 
             public SafeDispatchData(EventManager.HandlerType type, Event e)
             {
