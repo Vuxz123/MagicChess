@@ -1,19 +1,27 @@
-﻿using com.ethnicthv.Util.Networking.Packet;
+﻿using com.ethnicthv.Util;
+using com.ethnicthv.Util.Networking.Packet;
 
 namespace com.ethnicthv.Inner.Event
 {
-    public class ChessBoardEvent : Util.Event.Event
+    public class ChessBoardEvent : NetworkEvent
     {
-        public Type type { get; private set; }
+        public static ChessBoardEvent Resolver(Packet packet)
+        {
+            var reader = PacketReader.Create(packet);
+            var eventType = (EventType)reader.ReadByte();
+            return new ChessBoardEvent(eventType);
+        }
+        
+        public EventType eventType { get; private set; }
         public object[] data { get; private set; }
         
-        public ChessBoardEvent(Type type, params object[] data)
+        public ChessBoardEvent(EventType eventType, params object[] data) : base(typeof(ChessBoardEvent), Resolver)
         {
-            this.type = type;
+            this.eventType = eventType;
             this.data = data;
         }
      
-        public enum Type
+        public enum EventType
         {
             Init,
             Move,
@@ -31,6 +39,11 @@ namespace com.ethnicthv.Inner.Event
             DeclineRematch,
             ResignRematch,
             GameOver
+        }
+
+        public override Packet ToPacket()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

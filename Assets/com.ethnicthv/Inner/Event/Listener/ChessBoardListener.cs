@@ -13,7 +13,7 @@ namespace com.ethnicthv.Inner.Event.Listener
         public bool HandleEventLocal(ChessBoardEvent e)
         {
             Debug.Log("HandleEventLocal: " + e);
-            if(e.type != ChessBoardEvent.Type.Move) return false;
+            if(e.type != ChessBoardEvent.EventType.Move) return false;
             var origin = ((int, int)) e.data[1];
             var destination = ((int, int)) e.data[2];
             var outer = (IPiece) e.data[0];

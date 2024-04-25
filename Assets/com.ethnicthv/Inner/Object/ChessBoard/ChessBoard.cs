@@ -82,12 +82,12 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             {
                 Debug.Log("ChessBoard: Call Client Event");
                 EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, new ChessBoardEvent(
-                        ChessBoardEvent.Type.Move,
+                        ChessBoardEvent.EventType.Move,
                         controller, (fromX, fromY), (toX, toY)),
                     e => { });
                 Debug.Log("ChessBoard: Call Local Event");
                 EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, new ChessBoardEvent(
-                        ChessBoardEvent.Type.Move,
+                        ChessBoardEvent.EventType.Move,
                         controller, (fromX, fromY), (toX, toY)),
                     e =>
                     {
