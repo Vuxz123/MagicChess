@@ -35,18 +35,34 @@ namespace com.ethnicthv
             var v = new byte[]
             {
                 0b_0000_0000,
-                0b_0000_0111,
+                0b_1100_0111,
                 0b_1101_1010,
                 0b_1111_1001,
             };
 
             const byte add = 0b_111;
             
-            // var temp = BytesUtil.AppendBytes(a , v, 0, 11);
+            // var temp = BytesUtil.GetByte(a[0] , 6, 2, true);
+            // Debug.Log("Bytes: " + Convert.ToString(temp, 2).PadLeft(8, '0'));
+            
+            // var temp = BytesUtil.AppendBytes(a , v, 10, 16);
             // Debug.Log("Bytes: \n" + string.Join("\n", temp.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
 
-            var packet = PacketWriter.Create().Write((byte)10).Write(false).Write(true).Write((short) 3103).GetPacket();
+            var packet = PacketWriter.Create()
+                .Write((byte)10)
+                .Write(false)
+                .Write(true)
+                .Write((short) 3103)
+                .Write((byte) Byte.MaxValue)
+                .GetPacket();
             Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            
+            var reader = PacketReader.Create(packet);
+            Debug.Log("Read: " + reader.ReadByte());
+            Debug.Log("Read: " + reader.ReadBool());
+            Debug.Log("Read: " + reader.ReadBool());
+            Debug.Log("Read: " + reader.ReadShort());
+            Debug.Log("Read: " + reader.ReadByte());
         }
 
         private void Update()

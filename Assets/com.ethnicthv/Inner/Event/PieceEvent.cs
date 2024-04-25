@@ -29,15 +29,5 @@ namespace com.ethnicthv.Inner.Event
             Damage,
             Heal
         }
-
-        public override Packet PackEvent()
-        {
-            return null;
-        }
-
-        public override void UnpackEvent(Packet packet)
-        {
-            return;
-        }
     }
 }

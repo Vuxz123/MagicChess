@@ -11,15 +11,5 @@ namespace com.ethnicthv.Outer.Event
         {
             Square = square;
         }
-        
-        public override Packet PackEvent()
-        {
-            return null;
-        }
-
-        public override void UnpackEvent(Packet packet)
-        {
-            return;
-        }
     }
 }

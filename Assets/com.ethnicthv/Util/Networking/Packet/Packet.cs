@@ -6,7 +6,7 @@
         
         private Packet()
         {
-            _bytes = new byte[8];
+            _bytes = new byte[32];
         }
         
         public byte[] GetBytes()
@@ -24,6 +24,14 @@
             }
             
             return packet;
+        }
+        
+        public void Clear()
+        {
+            lock (Pool)
+            {
+                Pool.Return(this);
+            }
         }
         
         private static readonly Pool<Packet> Pool = new(() => new Packet());

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Linq;
-using Unity.VisualScripting;
 
 namespace com.ethnicthv.Util.Networking.Packet
 {
-    //TODO: Rewrite this class to be compatible with adding bits (Current not work after adding bits)
-    
     /// <summary>
     /// Thread-Safe PacketWriter class that can be used to write data to a Packet object. <br/>
     /// </summary>
@@ -19,7 +16,7 @@ namespace com.ethnicthv.Util.Networking.Packet
 
         private byte[] Bytes => _p.GetBytes();
         
-        private byte[] tempBytes = new byte[8];
+        private readonly byte[] _tempBuffer = new byte[8];
 
         private PacketWriter()
         {
@@ -55,21 +52,21 @@ namespace com.ethnicthv.Util.Networking.Packet
 
         public PacketWriter Write(short s)
         {
-            BytesUtil.ShortToBytes(s, tempBytes);
-            return WriteBits(tempBytes, 16);
+            BytesUtil.ShortToBytes(s, _tempBuffer);
+            return WriteBits(_tempBuffer, 16);
         }
 
         public PacketWriter Write(int i)
         {
-            BytesUtil.IntToBytes(i, tempBytes);
-            Debug.Log("Temp Bytes: \n" + string.Join("\n", tempBytes.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            return WriteBits(tempBytes, 32);
+            BytesUtil.IntToBytes(i, _tempBuffer);
+            Debug.Log("Temp Bytes: \n" + string.Join("\n", _tempBuffer.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            return WriteBits(_tempBuffer, 32);
         }
 
         public PacketWriter Write(float f)
         {
-            BytesUtil.FloatToBytes(f, tempBytes);
-            return WriteBits(tempBytes, 32);
+            BytesUtil.FloatToBytes(f, _tempBuffer);
+            return WriteBits(_tempBuffer, 32);
         }
 
         public PacketWriter Write(bool b)
@@ -90,7 +87,7 @@ namespace com.ethnicthv.Util.Networking.Packet
         public PacketWriter WriteBits(byte[] bits, int length)
         {
             CheckWriteValidity(length);
-            Debug.Log("Bits: \n" + string.Join("\n", bits.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            // Debug.Log("Bits: \n" + string.Join("\n", bits.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
             var l = bits.Length * 8;
             if (length < 1 || length > l )
                 throw new ArgumentException($"Length {l} must be from 1 to " + l);
@@ -101,7 +98,7 @@ namespace com.ethnicthv.Util.Networking.Packet
         
         private void CheckWriteValidity(int length)
         {
-            var remaining = 64 - _length;
+            var remaining = 256 - _length;
             if (length > remaining)
                 throw new ArgumentException($"Length {length} is exceeding the remaining space in the packet.");
             if (length < 1)
@@ -110,7 +107,7 @@ namespace com.ethnicthv.Util.Networking.Packet
 
         public Packet GetPacket()
         {
-            Debug.Log(_length);
+            // Debug.Log(_length);
             lock (Pool)
             {
                 Pool.Return(this);
