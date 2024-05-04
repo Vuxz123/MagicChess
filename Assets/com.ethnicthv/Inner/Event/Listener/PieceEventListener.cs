@@ -1,7 +1,7 @@
 ﻿using System;
 using com.ethnicthv.Inner.Object.Piece;
-using com.ethnicthv.Util.Event;
-using Debug = com.ethnicthv.Util.Debug;
+using com.ethnicthv.Other.Event;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Inner.Event.Listener
 {

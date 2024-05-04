@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Object.Piece;
+using com.ethnicthv.Other.Event;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
-using com.ethnicthv.Util.Event;
 using UnityEngine;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Outer.Event.Listener
 {

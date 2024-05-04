@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using com.ethnicthv.Outer.Behaviour.Piece;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Inner.Object.Piece.Action
 {

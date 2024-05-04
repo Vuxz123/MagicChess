@@ -1,9 +1,9 @@
 ﻿using System;
+using com.ethnicthv.Other.Event;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Outer.Event;
-using com.ethnicthv.Util.Event;
 using UnityEngine;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Outer.Behaviour.Chess
 {

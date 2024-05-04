@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using com.ethnicthv.Inner;
+using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Inner.Object.Piece;
+using com.ethnicthv.Other.Networking;
+using com.ethnicthv.Other.Networking.Packet;
 using com.ethnicthv.Outer;
 using com.ethnicthv.Outer.Event;
 using com.ethnicthv.Outer.Event.Listener;
 using com.ethnicthv.Outer.Util.Camera;
-using com.ethnicthv.Util.Networking.Packet;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 using Object = UnityEngine.Object;
 
 namespace com.ethnicthv
@@ -27,42 +30,15 @@ namespace com.ethnicthv
         private bool _isDirty = true;
         private void Start()
         {
-            var a = new byte[]
-            {
-                0b_0111_0001,
-                0b_1110_0001,
-            };
-            var v = new byte[]
-            {
-                0b_0000_0000,
-                0b_1100_0111,
-                0b_1101_1010,
-                0b_1111_1001,
-            };
+            TestPacketWriterReader();
 
-            const byte add = 0b_111;
-            
-            // var temp = BytesUtil.GetByte(a[0] , 6, 2, true);
-            // Debug.Log("Bytes: " + Convert.ToString(temp, 2).PadLeft(8, '0'));
-            
-            // var temp = BytesUtil.AppendBytes(a , v, 10, 16);
-            // Debug.Log("Bytes: \n" + string.Join("\n", temp.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-
-            var packet = PacketWriter.Create()
-                .Write((byte)10)
-                .Write(false)
-                .Write(true)
-                .Write((short) 3103)
-                .Write((byte) Byte.MaxValue)
-                .GetPacket();
-            Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            
-            var reader = PacketReader.Create(packet);
-            Debug.Log("Read: " + reader.ReadByte());
-            Debug.Log("Read: " + reader.ReadBool());
-            Debug.Log("Read: " + reader.ReadBool());
-            Debug.Log("Read: " + reader.ReadShort());
-            Debug.Log("Read: " + reader.ReadByte());
+            // var ev = new ChessBoardEvent(ChessBoardEvent.EventType.Check);
+            // Debug.Log("Old Event: " + ev);
+            // var i = NetworkManager.Instance;
+            // var packet = i.PacketizeEvent(e: ev);
+            // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            // var nev = i.ResolvePacket(packet);
+            // Debug.Log("New Event: " + nev);
         }
 
         private void Update()
@@ -118,6 +94,126 @@ namespace com.ethnicthv
             cameraText.text = $"Camera Pos: {_cameraPos}";
             actionText.text = $"Action Type: {OnSquareSelectedListener.Action}";
             _isDirty = false;
+        }
+        
+        private void TestPacketWriterReader()
+        {
+            var a = new byte[]
+            {
+                0b_0111_0001,
+                0b_1110_0001,
+            };
+            var v = new byte[]
+            {
+                0b_0000_0000,
+                0b_1100_0111,
+                0b_1101_1010,
+                0b_1111_1001,
+            };
+            
+            const byte add = 0b_111;
+            
+            // var temp = BytesUtil.GetByte(a[0] , 6, 2, true);
+            // Debug.Log("Bytes: " + Convert.ToString(temp, 2).PadLeft(8, '0'));
+            
+            // var temp = BytesUtil.AppendBytes(a , v, 10, 16);
+            // Debug.Log("Bytes: \n" + string.Join("\n", temp.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            {
+                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                var packet = PacketWriter.Create()
+                    .Write((byte)10)
+                    .Write(false)
+                    .Write(true)
+                    .Write((short) 3103)
+                    .Write((byte) Byte.MaxValue)
+                    .GetPacket();
+                Debug.Log(watch.Elapsed);
+                // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            
+                watch = System.Diagnostics.Stopwatch.StartNew();
+                var reader = PacketReader.Create(packet);
+                var temp1 = reader.ReadByte();
+                var temp2 = reader.ReadBool();
+                var temp3 = reader.ReadBool();
+                var temp4 = reader.ReadShort();
+                var temp5 = reader.ReadByte();
+                Debug.Log(watch.Elapsed);
+                reader.Close();
+            }
+            // Debug.Log($"Read: {temp1}");
+            // Debug.Log("Read: " + temp2);
+            // Debug.Log("Read: " + temp3);
+            // Debug.Log("Read: " + temp4);
+            // Debug.Log("Read: " + temp5);
+            
+            {
+                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                var packet = PacketWriter.Create()
+                    .Write((byte)10)
+                    .Write(false)
+                    .Write(true)
+                    .Write((short) 3103)
+                    .Write((byte) Byte.MaxValue)
+                    .GetPacket();
+                Debug.Log(watch.Elapsed);
+                // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            
+                watch = System.Diagnostics.Stopwatch.StartNew();
+                var reader = PacketReader.Create(packet);
+                var temp1 = reader.ReadByte();
+                var temp2 = reader.ReadBool();
+                var temp3 = reader.ReadBool();
+                var temp4 = reader.ReadShort();
+                var temp5 = reader.ReadByte();
+                Debug.Log(watch.Elapsed);
+                reader.Close();
+            }
+            
+            {
+                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                var packet = PacketWriter.Create()
+                    .Write((byte)10)
+                    .Write(false)
+                    .Write(true)
+                    .Write((short) 3103)
+                    .Write((byte) Byte.MaxValue)
+                    .GetPacket();
+                Debug.Log(watch.Elapsed);
+                // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            
+                watch = System.Diagnostics.Stopwatch.StartNew();
+                var reader = PacketReader.Create(packet);
+                var temp1 = reader.ReadByte();
+                var temp2 = reader.ReadBool();
+                var temp3 = reader.ReadBool();
+                var temp4 = reader.ReadShort();
+                var temp5 = reader.ReadByte();
+                Debug.Log(watch.Elapsed);
+                reader.Close();
+            }
+
+            {
+                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                for (int i = 0; i < 100000; i++)
+                {
+                    var packet = PacketWriter.Create()
+                        .Write((byte)10)
+                        .Write(false)
+                        .Write(true)
+                        .Write((short) 3103)
+                        .Write((byte) Byte.MaxValue)
+                        .GetPacket();
+            
+                    var reader = PacketReader.Create(packet);
+                    var temp1 = reader.ReadByte();
+                    var temp2 = reader.ReadBool();
+                    var temp3 = reader.ReadBool();
+                    var temp4 = reader.ReadShort();
+                    var temp5 = reader.ReadByte();
+                    reader.Close();
+                }
+                Debug.Log(watch.Elapsed);
+            }
         }
     }
 }

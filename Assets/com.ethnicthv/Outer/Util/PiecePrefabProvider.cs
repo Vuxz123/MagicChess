@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 using PieceInner = com.ethnicthv.Inner.Object.Piece;
 
 namespace com.ethnicthv.Outer.Util

@@ -1,8 +1,9 @@
 ﻿using System;
 using com.ethnicthv.Inner;
+using com.ethnicthv.Other.Config;
+using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Networking;
 using com.ethnicthv.Outer;
-using com.ethnicthv.Util.Config;
-using com.ethnicthv.Util.Event;
 using UnityEngine;
 
 namespace com.ethnicthv
@@ -34,6 +35,8 @@ namespace com.ethnicthv
             EventManager.Instance.Init();
             
             SafeMechanism.Init();
+            
+            NetworkManager.Instance.Init();
         }
 
         private void FixedUpdate()

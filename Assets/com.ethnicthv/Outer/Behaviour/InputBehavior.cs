@@ -1,7 +1,7 @@
 ﻿using System;
 using com.ethnicthv.Outer.Event.Listener;
 using UnityEngine;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Outer.Behaviour
 {

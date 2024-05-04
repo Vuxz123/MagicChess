@@ -1,8 +1,8 @@
 ﻿using System;
+using com.ethnicthv.Other.Event;
 using com.ethnicthv.Outer;
 using com.ethnicthv.Outer.Behaviour.Piece;
-using com.ethnicthv.Util.Event;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Inner.Event.Listener
 {
@@ -13,10 +13,10 @@ namespace com.ethnicthv.Inner.Event.Listener
         public bool HandleEventLocal(ChessBoardEvent e)
         {
             Debug.Log("HandleEventLocal: " + e);
-            if(e.eventType != ChessBoardEvent.EventType.Move) return false;
-            var origin = ((int, int)) e.data[1];
-            var destination = ((int, int)) e.data[2];
-            var outer = (IPiece) e.data[0];
+            if(e.Type != ChessBoardEvent.EventType.Move) return false;
+            var origin = ((int, int)) e.Data[1];
+            var destination = ((int, int)) e.Data[2];
+            var outer = (IPiece) e.Data[0];
             var outerDest = GameManagerOuter.ConvertInnerToOuterPos(destination);
             outer.SetPosToSquare(outerDest);
             return true;

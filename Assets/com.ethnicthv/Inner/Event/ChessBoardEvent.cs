@@ -1,8 +1,10 @@
-﻿using com.ethnicthv.Util;
-using com.ethnicthv.Util.Networking.Packet;
+﻿using com.ethnicthv.Other;
+using com.ethnicthv.Other.Networking;
+using com.ethnicthv.Other.Networking.Packet;
 
 namespace com.ethnicthv.Inner.Event
 {
+    [Network(fromPacketMethodName: nameof(FromPacket), eventNetworkName: "chessboard")]
     public class ChessBoardEvent : NetworkEvent
     {
         public static ChessBoardEvent Resolver(Packet packet)
@@ -12,13 +14,13 @@ namespace com.ethnicthv.Inner.Event
             return new ChessBoardEvent(eventType);
         }
         
-        public EventType eventType { get; private set; }
-        public object[] data { get; private set; }
+        public EventType Type { get; private set; }
+        public object[] Data { get; private set; }
         
-        public ChessBoardEvent(EventType eventType, params object[] data) : base(typeof(ChessBoardEvent), Resolver)
+        public ChessBoardEvent(EventType type, params object[] data)
         {
-            this.eventType = eventType;
-            this.data = data;
+            Type = type;
+            Data = data;
         }
      
         public enum EventType
@@ -40,10 +42,30 @@ namespace com.ethnicthv.Inner.Event
             ResignRematch,
             GameOver
         }
-
-        public override Packet ToPacket()
+        
+        public Packet ToPacket()
         {
-            throw new System.NotImplementedException();
+            var writer = PacketWriter.Create();
+            writer.Write((byte)Type);
+            return writer.GetPacket();
+        }
+        
+        public static ChessBoardEvent FromPacket(Packet packet)
+        {
+            var reader = PacketReader.Create(packet);
+            var eventType = (EventType)reader.ReadByte();
+            return new ChessBoardEvent(eventType);
+        }
+
+        public override string ToString()
+        {
+            return $"Event Type: {Type}, Data: {Data}";
+        }
+
+        public override Packet ToPacket(PacketWriter writer)
+        {
+            writer.Write((byte)Type);
+            return writer.GetPacket();
         }
     }
 }

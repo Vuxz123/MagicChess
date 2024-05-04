@@ -1,4 +1,4 @@
-﻿using com.ethnicthv.Util.Event;
+﻿using com.ethnicthv.Other.Event;
 
 namespace com.ethnicthv.Outer.Event.Listener
 {

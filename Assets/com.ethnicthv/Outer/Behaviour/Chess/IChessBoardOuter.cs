@@ -2,7 +2,7 @@
 using com.ethnicthv.Outer.Behaviour.Piece;
 using com.ethnicthv.Outer.Util;
 using UnityEngine;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Outer.Behaviour.Chess
 {

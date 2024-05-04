@@ -1,9 +1,9 @@
 ﻿using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Inner.Object.ChessBoard.Exception;
+using com.ethnicthv.Other.Event;
 using com.ethnicthv.Outer.Behaviour.Chess;
 using com.ethnicthv.Outer.Behaviour.Piece;
-using com.ethnicthv.Util.Event;
-using Debug = com.ethnicthv.Util.Debug;
+using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv.Inner.Object.ChessBoard
 {
@@ -91,8 +91,8 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
                         controller, (fromX, fromY), (toX, toY)),
                     e =>
                     {
-                        var dest = ((int, int))e.data[2];
-                        var origin = ((int, int))e.data[1];
+                        var dest = ((int, int))e.Data[2];
+                        var origin = ((int, int))e.Data[1];
                         //replace the piece in the board
                         
                         (_board[dest.Item1, dest.Item2], _board[origin.Item1, origin.Item2]) = 
