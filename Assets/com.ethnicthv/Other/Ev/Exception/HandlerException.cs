@@ -1,4 +1,4 @@
-﻿namespace com.ethnicthv.Other.Event.Exception
+﻿namespace com.ethnicthv.Other.Ev.Exception
 {
     public class HandlerException : System.Exception
     {

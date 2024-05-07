@@ -1,7 +1,7 @@
 ﻿using System;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Other.Config;
-using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Other.Networking;
 using com.ethnicthv.Outer;
 using UnityEngine;

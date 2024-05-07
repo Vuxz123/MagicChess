@@ -5,7 +5,7 @@ using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Other.Networking;
-using com.ethnicthv.Other.Networking.Packet;
+using com.ethnicthv.Other.Networking.P;
 using com.ethnicthv.Outer;
 using com.ethnicthv.Outer.Event;
 using com.ethnicthv.Outer.Event.Listener;
@@ -30,15 +30,9 @@ namespace com.ethnicthv
         private bool _isDirty = true;
         private void Start()
         {
-            TestPacketWriterReader();
+            //TestPacketWriterReader();
 
-            // var ev = new ChessBoardEvent(ChessBoardEvent.EventType.Check);
-            // Debug.Log("Old Event: " + ev);
-            // var i = NetworkManager.Instance;
-            // var packet = i.PacketizeEvent(e: ev);
-            // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            // var nev = i.ResolvePacket(packet);
-            // Debug.Log("New Event: " + nev);
+            TestNetworkConversion();
         }
 
         private void Update()
@@ -212,6 +206,21 @@ namespace com.ethnicthv
                     var temp5 = reader.ReadByte();
                     reader.Close();
                 }
+                Debug.Log(watch.Elapsed);
+            }
+        }
+
+        private void TestNetworkConversion()
+        {
+            for (int v = 0; v < 10; v++)
+            {
+                var ev = new ChessBoardEvent(ChessBoardEvent.EventType.Check);
+                var i = NetworkManager.Instance;
+                Stopwatch watch = Stopwatch.StartNew();
+                var packet = i.PacketizeEvent(e: ev);
+                Debug.Log(watch.Elapsed);
+                watch = Stopwatch.StartNew();
+                var nev = i.ResolvePacket(packet);
                 Debug.Log(watch.Elapsed);
             }
         }

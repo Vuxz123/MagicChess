@@ -1,5 +1,5 @@
 using com.ethnicthv.Inner.Event;
-using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Outer.Behaviour.Piece;
 
 namespace com.ethnicthv.Inner.Object.Piece

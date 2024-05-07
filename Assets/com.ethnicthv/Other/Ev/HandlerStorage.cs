@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using com.ethnicthv.Other.Event.Exception;
+using com.ethnicthv.Other.Ev.Exception;
 
-namespace com.ethnicthv.Other.Event
+namespace com.ethnicthv.Other.Ev
 {
     public class HandlerStorage
     {
@@ -23,16 +23,16 @@ namespace com.ethnicthv.Other.Event
             _handlers[eventType].AddLast(handler);
         }
             
-        public void UnregisterHandler<T>(Other.Event.EventHandler<T> handler) where T : Other.Event.Event
+        public void UnregisterHandler<T>(EventHandler<T> handler) where T : Event
         {
             var type = typeof(T);
             if (_handlers.ContainsKey(type))
             {
-                _handlers[type].Remove(handler as Other.Event.EventHandler<Other.Event.Event>);
+                _handlers[type].Remove(handler as EventHandler<Event>);
             }
         }
         
-        public void DispatchEvent<T>(T e, CallbackFunction<T> callback = null) where T : Other.Event.Event
+        public void DispatchEvent<T>(T e, CallbackFunction<T> callback = null) where T : Event
         {
             var type = typeof(T);
             if (!_handlers.ContainsKey(type)) return;

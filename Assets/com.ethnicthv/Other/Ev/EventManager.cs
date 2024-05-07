@@ -6,9 +6,9 @@ using com.ethnicthv.Other.Config;
 using Unity.VisualScripting;
 using UnityEngine.Assertions;
 
-namespace com.ethnicthv.Other.Event
+namespace com.ethnicthv.Other.Ev
 {
-    public delegate void CallbackFunction<in T>(T e) where T : Other.Event.Event;
+    public delegate void CallbackFunction<in T>(T e) where T : Event;
 
     public class EventManager
     {
@@ -96,7 +96,7 @@ namespace com.ethnicthv.Other.Event
             storage.RegisterHandler(eventType, handler);
         }
 
-        public void RegisterHandler<T>(HandlerType handlerType, Other.Event.EventHandler<T> handler) where T : Other.Event.Event
+        public void RegisterHandler<T>(HandlerType handlerType, EventHandler<T> handler) where T : Event
         {
             var type = typeof(T);
             RegisterHandler(handlerType, type, handler);
@@ -127,7 +127,7 @@ namespace com.ethnicthv.Other.Event
         /// <exception cref="Exception"></exception>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public async void DispatchEvent<T>(HandlerType handlerType, T e, CallbackFunction<T> callback = null)
-            where T : Other.Event.Event
+            where T : Event
         {
             Debug.Log("EventManager: Checking!");
             //Check if the event dispatching is on the main thread
@@ -160,7 +160,7 @@ namespace com.ethnicthv.Other.Event
         /// <summary>
         /// SafeDispatchEvent is a Variant of DispatchEvent that can be called from any thread. It is used to dispatch events of a specific type T where T is a subclass of Event. This method can be called from any thread.
         /// </summary>
-        public void SafeDispatchEvent<T>(HandlerType handlerType, T e) where T : Other.Event.Event
+        public void SafeDispatchEvent<T>(HandlerType handlerType, T e) where T : Event
         {
             //check if SafeMechanism is initialized
             if (!SafeMechanism.IsInitialized)
@@ -214,12 +214,12 @@ namespace com.ethnicthv.Other.Event
         /// A Static version of Enqueue method that can be called from any thread. <br/>
         /// This method is for life easier when calling from a static context.
         /// </summary>
-        public static void Enqueue<T>(EventManager.HandlerType handlerType, T e) where T : Other.Event.Event
+        public static void Enqueue<T>(EventManager.HandlerType handlerType, T e) where T : Event
         {
             Instance.Enqueue(handlerType, e);
         }
 
-        public void Enqueue(EventManager.HandlerType handlerType, Other.Event.Event e)
+        public void Enqueue(EventManager.HandlerType handlerType, Event e)
         {
             if (GameManager.IsOnMainThread())
             {
@@ -271,9 +271,9 @@ namespace com.ethnicthv.Other.Event
         private class SafeDispatchData
         {
             internal EventManager.HandlerType Type;
-            internal Other.Event.Event E;
+            internal Event E;
 
-            public SafeDispatchData(EventManager.HandlerType type, Other.Event.Event e)
+            public SafeDispatchData(EventManager.HandlerType type, Event e)
             {
                 Type = type;
                 E = e;

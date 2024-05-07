@@ -3,7 +3,7 @@ using com.ethnicthv.Inner.Object.Piece;
 
 namespace com.ethnicthv.Inner.Event
 {
-    public class PieceEvent : Other.Event.Event
+    public class PieceEvent : Other.Ev.Event
     {
         public Type type { get; private set; }
 

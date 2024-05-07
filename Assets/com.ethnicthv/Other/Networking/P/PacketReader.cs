@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace com.ethnicthv.Other.Networking.Packet
+namespace com.ethnicthv.Other.Networking.P
 {
     /// <summary>
     /// Thread-Safe PacketReader class that can be used to read data from a Packet object. <br/>
@@ -9,7 +9,7 @@ namespace com.ethnicthv.Other.Networking.Packet
     {
         private static readonly Pool<PacketReader> Pool = new(() => new PacketReader());
         
-        private Other.Networking.Packet.Packet _p;
+        private Packet _p;
         
         private int _readPos;
         
@@ -28,7 +28,7 @@ namespace com.ethnicthv.Other.Networking.Packet
         /// <param name="packet">
         /// The Packet object to be assigned to the PacketReader.
         /// </param>
-        public static PacketReader Create(Other.Networking.Packet.Packet packet)
+        public static PacketReader Create(Packet packet)
         {
             PacketReader writer;
             

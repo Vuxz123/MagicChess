@@ -2,7 +2,7 @@
 
 namespace com.ethnicthv.Outer.Event
 {
-    public class OnSquareSelectingEvent : Other.Event.Event
+    public class OnSquareSelectingEvent : Other.Ev.Event
     {
         public ISquare Square { get; }
 

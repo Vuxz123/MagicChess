@@ -1,24 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using com.ethnicthv.Other.Networking.Packet;
+using com.ethnicthv.Other.Ev;
+using com.ethnicthv.Other.Networking.P;
 
 namespace com.ethnicthv.Other.Networking
 {
+    public delegate Event FromPacketDelegate(Packet packet);
     public class NetworkManager
     {
-        public readonly PacketResolver Resolver;
         public readonly NetworkID NetID;
         
         private static NetworkManager _instance;
         
-        private readonly Dictionary<Type, byte> PacketTypes = new();
-        
+        private readonly Dictionary<Type, byte> _packetTypes = new();
+        private readonly Dictionary<byte, NetworkEvent> _eventBuilders = new();
+
         public static NetworkManager Instance => _instance ??= new NetworkManager();
         
         private NetworkManager()
         {
-            Resolver = new PacketResolver();
             NetID = new NetworkID();
         }
 
@@ -29,28 +30,30 @@ namespace com.ethnicthv.Other.Networking
             foreach (var networkEvent in networkEvents)
             {
                 var attribute = networkEvent.GetCustomAttribute<NetworkAttribute>();
-                var fromPacketMethod = attribute.GetFromPacketMethod(networkEvent);
                 var id = NetID.GetID(attribute.EventNetworkName);
-                PacketTypes[networkEvent] = id;
-                Resolver.RegisterPacketType(id, networkEvent, packet => fromPacketMethod.Invoke(null, new object[] {packet}));
+                _packetTypes[networkEvent] = id;
+                _eventBuilders[id] = (NetworkEvent) Activator.CreateInstance(networkEvent);
                 i++;
             }
             
             Debug.Log($"Registered {i} network events resolver.");
         }
         
-        public Event.Event ResolvePacket(Packet.Packet packet)
+        public Event ResolvePacket(Packet packet)
         {
-            var (_, obj) = Resolver.ResolvePacketType(packet);
-            return obj as Event.Event;
+            var reader = PacketReader.Create(packet);
+            var id = reader.ReadByte();
+            var obj = _eventBuilders[id].FromPacket(reader);
+            reader.Close();
+            return obj;
         }
         
-        public Packet.Packet PacketizeEvent(Event.Event e)
+        public Packet PacketizeEvent(NetworkEvent e)
         {
             var writer = PacketWriter.Create();
-            writer.Write(PacketTypes[e.GetType()]);
-            var converter = e as IPacketConverter;
-            return converter?.ToPacket(writer);
+            writer.Write(_packetTypes[e.GetType()]);
+            e.ToPacket(writer);
+            return writer.GetPacket();
         }
     }
 }

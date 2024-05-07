@@ -1,21 +1,19 @@
 ﻿using com.ethnicthv.Other;
 using com.ethnicthv.Other.Networking;
-using com.ethnicthv.Other.Networking.Packet;
+using com.ethnicthv.Other.Networking.P;
 
 namespace com.ethnicthv.Inner.Event
 {
-    [Network(fromPacketMethodName: nameof(FromPacket), eventNetworkName: "chessboard")]
+    [Network(eventNetworkName: "chessboard")]
     public class ChessBoardEvent : NetworkEvent
     {
-        public static ChessBoardEvent Resolver(Packet packet)
-        {
-            var reader = PacketReader.Create(packet);
-            var eventType = (EventType)reader.ReadByte();
-            return new ChessBoardEvent(eventType);
-        }
-        
         public EventType Type { get; private set; }
         public object[] Data { get; private set; }
+        
+        public ChessBoardEvent()
+        {
+            Type = 0;
+        }
         
         public ChessBoardEvent(EventType type, params object[] data)
         {
@@ -49,23 +47,21 @@ namespace com.ethnicthv.Inner.Event
             writer.Write((byte)Type);
             return writer.GetPacket();
         }
-        
-        public static ChessBoardEvent FromPacket(Packet packet)
-        {
-            var reader = PacketReader.Create(packet);
-            var eventType = (EventType)reader.ReadByte();
-            return new ChessBoardEvent(eventType);
-        }
 
         public override string ToString()
         {
             return $"Event Type: {Type}, Data: {Data}";
         }
 
-        public override Packet ToPacket(PacketWriter writer)
+        public override void ToPacket(PacketWriter writer)
         {
             writer.Write((byte)Type);
-            return writer.GetPacket();
+        }
+
+        public override Other.Ev.Event FromPacket(PacketReader reader)
+        {
+            var eventType = (EventType)reader.ReadByte();
+            return new ChessBoardEvent(eventType);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace com.ethnicthv.Other.Networking.Packet
+namespace com.ethnicthv.Other.Networking.P
 {
     public static class BytesUtil
     {

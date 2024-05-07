@@ -1,4 +1,4 @@
-﻿namespace com.ethnicthv.Other.Event
+﻿namespace com.ethnicthv.Other.Ev
 {
     public abstract class Event
     {

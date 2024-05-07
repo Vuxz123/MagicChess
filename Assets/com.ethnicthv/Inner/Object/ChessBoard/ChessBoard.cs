@@ -1,6 +1,6 @@
 ﻿using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Inner.Object.ChessBoard.Exception;
-using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Outer.Behaviour.Chess;
 using com.ethnicthv.Outer.Behaviour.Piece;
 using Debug = com.ethnicthv.Other.Debug;

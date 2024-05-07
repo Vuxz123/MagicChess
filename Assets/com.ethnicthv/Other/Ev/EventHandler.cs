@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace com.ethnicthv.Other.Event
+namespace com.ethnicthv.Other.Ev
 {
-    public delegate bool EventHandler<in T>(T e) where T : Other.Event.Event;
+    public delegate bool EventHandler<in T>(T e) where T : Event;
 
     internal class EventListener : Attribute
     {
@@ -10,7 +10,7 @@ namespace com.ethnicthv.Other.Event
         
         public EventListener(Type eventType)
         {
-            if (!eventType.IsSubclassOf(typeof(Other.Event.Event)))
+            if (!eventType.IsSubclassOf(typeof(Event)))
             {
                 throw new NotSupportedException("Event type must be a subclass of Event");
             }

@@ -1,5 +1,5 @@
 ﻿using System;
-using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Outer.Event;
 using UnityEngine;

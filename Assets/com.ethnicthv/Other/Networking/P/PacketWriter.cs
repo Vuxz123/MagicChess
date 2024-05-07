@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace com.ethnicthv.Other.Networking.Packet
+namespace com.ethnicthv.Other.Networking.P
 {
     /// <summary>
     /// Thread-Safe PacketWriter class that can be used to write data to a Packet object. <br/>
@@ -12,7 +12,7 @@ namespace com.ethnicthv.Other.Networking.Packet
         
         private int _length;
 
-        private Other.Networking.Packet.Packet _p;
+        private Packet _p;
 
         private byte[] Bytes => _p.GetBytes();
         
@@ -40,7 +40,7 @@ namespace com.ethnicthv.Other.Networking.Packet
             }
             
             // Create a new Packet object for the PacketWriter
-            writer._p = Other.Networking.Packet.Packet.Create();
+            writer._p = Packet.Create();
 
             return writer;
         }
@@ -105,7 +105,7 @@ namespace com.ethnicthv.Other.Networking.Packet
                 throw new ArgumentException($"Length {length} must be greater than 0.");
         }
 
-        public Other.Networking.Packet.Packet GetPacket()
+        public Packet GetPacket()
         {
             // Debug.Log(_length);
             lock (Pool)

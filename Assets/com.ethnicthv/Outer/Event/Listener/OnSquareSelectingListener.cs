@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Object.Piece;
-using com.ethnicthv.Other.Event;
+using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using UnityEngine;
 using Debug = com.ethnicthv.Other.Debug;
