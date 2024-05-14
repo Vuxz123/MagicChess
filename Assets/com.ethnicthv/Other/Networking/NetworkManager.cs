@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Reflection;
+using System.Threading;
 using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Other.Networking.P;
 
@@ -10,7 +12,7 @@ namespace com.ethnicthv.Other.Networking
     public class NetworkManager
     {
         public readonly NetworkID NetID;
-        
+
         private static NetworkManager _instance;
         
         private readonly Dictionary<Type, byte> _packetTypes = new();
@@ -37,7 +39,7 @@ namespace com.ethnicthv.Other.Networking
             }
             
             Debug.Log($"Registered {i} network events resolver.");
-        }
+        }  
         
         public Event ResolvePacket(Packet packet)
         {
