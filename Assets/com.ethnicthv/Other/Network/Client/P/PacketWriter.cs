@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace com.ethnicthv.Other.Networking.P
+namespace com.ethnicthv.Other.Network.Client.P
 {
     /// <summary>
     /// Thread-Safe PacketWriter class that can be used to write data to a Packet object. <br/>
@@ -59,7 +59,7 @@ namespace com.ethnicthv.Other.Networking.P
         public PacketWriter Write(int i)
         {
             BytesUtil.IntToBytes(i, _tempBuffer);
-            Debug.Log("Temp Bytes: \n" + string.Join("\n", _tempBuffer.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+            Debug.Log("Temp Bytes: \n" + string.Join("\n", _tempBuffer.Select(b => Convert.ToString((byte)b, 2).PadLeft(8, '0'))));
             return WriteBits(_tempBuffer, 32);
         }
 

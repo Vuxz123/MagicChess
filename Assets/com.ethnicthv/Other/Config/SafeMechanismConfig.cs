@@ -1,14 +1,12 @@
 ﻿namespace com.ethnicthv.Other.Config
 {
-    public class SafeMechanismConfig
+    public struct SafeMechanismConfig
     {
         
-        public int QueueSize { get; set; } = 10;
-        public int EnqueueTimeout { get; set; } = 10;
-        public int DequeueTimeout { get; set; } = 0;
+        public int QueueSize { get; set; }
+        public int EnqueueTimeout { get; set; }
+        public int DequeueTimeout { get; set; }
         
-        public uint PoolSize { get; set; } = 0;
-        
-        public SafeMechanismConfig() { }
+        public uint PoolSize { get; set; }
     }
 }

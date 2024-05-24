@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Linq;
 using System.Threading.Tasks;
 using com.ethnicthv.Other.Config;
-using Unity.VisualScripting;
 using UnityEngine.Assertions;
 
 namespace com.ethnicthv.Other.Ev
@@ -19,8 +17,8 @@ namespace com.ethnicthv.Other.Ev
         public static EventManager Instance => _instance ??= new EventManager();
 
         private readonly HandlerStorage _local; //For Inner Event
-        private readonly HandlerStorage _client; //For Client communication
-        private readonly HandlerStorage _server; //For Server communication
+        private readonly HandlerStorage _client; //For Client sending
+        private readonly HandlerStorage _server; //For Server receiving
 
         private EventManager()
         {
@@ -35,53 +33,7 @@ namespace com.ethnicthv.Other.Ev
 
             _isInitialized = true;
 
-            var eventListeners = ReflectionHelper.GetClassesWithAttribute<EventListener>();
-
-            UnityEngine.Debug.Log($"Found {eventListeners.Count()} event listeners");
-
-            foreach (var listener in eventListeners)
-            {
-                var activator = Activator.CreateInstance(listener);
-                var eventType = listener.GetCustomAttributes(false).OfType<EventListener>().First().EventType;
-                {
-                    //Get LocalEventListeners
-                    var methods = ReflectionHelper.GetMethodsWithAttribute<LocalHandlerAttribute>(listener);
-                    foreach (var method in methods)
-                    {
-                        UnityEngine.Debug.Log("Local: " + method.ToSafeString());
-                        var handler =
-                            method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
-                                activator);
-                        RegisterHandler(HandlerType.Local, eventType, handler);
-                    }
-                }
-                {
-                    //Get ClientNetworkingSenders
-                    var methods = ReflectionHelper.GetMethodsWithAttribute<ClientNetworkingSenderAttribute>(listener);
-                    foreach (var method in methods)
-                    {
-                        UnityEngine.Debug.Log("Client: " + method.ToSafeString());
-                        var handler =
-                            method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
-                                activator);
-                        RegisterHandler(HandlerType.Client, eventType, handler);
-                        break;
-                    }
-                }
-                {
-                    //Get ServerNetworkingListeners
-                    var methods = ReflectionHelper.GetMethodsWithAttribute<ServerNetworkingHandlerAttribute>(listener);
-                    foreach (var method in methods)
-                    {
-                        UnityEngine.Debug.Log("Server: " + method.ToSafeString());
-                        var handler =
-                            method.CreateDelegate(ReflectionHelper.GetDelegateType(typeof(bool), eventType),
-                                activator);
-                        RegisterHandler(HandlerType.Server, eventType, handler);
-                        break;
-                    }
-                }
-            }
+            EventHandlerCrawler.Crawl(RegisterHandler);
         }
 
         public void RegisterHandler(HandlerType handlerType, Type eventType, Delegate handler)
@@ -170,7 +122,7 @@ namespace com.ethnicthv.Other.Ev
 
             //Assert e not null
             Assert.IsNotNull(e);
-            SafeMechanism.Enqueue<T>(handlerType, e);
+            SafeMechanism.Enqueue(handlerType, e);
         }
     }
 
@@ -247,7 +199,7 @@ namespace com.ethnicthv.Other.Ev
         /// <param name="max">
         /// maximum number of events to dispatch in a single frame. Default is 5
         /// </param>
-        public void DrainDispatchQueue(int max = 5)
+        public int DrainDispatchQueue(int max = 5)
         {
             //max dispatch 10 events per frame
             for (var i = 0; i < max; i++)
@@ -266,6 +218,8 @@ namespace com.ethnicthv.Other.Ev
                 }
                 else break;
             }
+            
+            return _blockingCollection.Count;
         }
 
         private class SafeDispatchData

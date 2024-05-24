@@ -1,6 +1,7 @@
 ﻿using com.ethnicthv.Other;
-using com.ethnicthv.Other.Networking;
-using com.ethnicthv.Other.Networking.P;
+using com.ethnicthv.Other.Network;
+using com.ethnicthv.Other.Network.Client;
+using com.ethnicthv.Other.Network.Client.P;
 
 namespace com.ethnicthv.Inner.Event
 {

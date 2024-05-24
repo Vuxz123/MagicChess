@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace com.ethnicthv.Other.Networking.P
+namespace com.ethnicthv.Other.Network.Client.P
 {
     public static class BytesUtil
     {
@@ -375,24 +375,24 @@ namespace com.ethnicthv.Other.Networking.P
             return temp;
         }
 
-        public static void IntToBytes(int i, byte[] bytes)
+        public static void IntToBytes(int i, byte[] bytes, int offset = 0)
         {
-            bytes[0] = (byte)(i >> 24);
-            bytes[1] = (byte)(i >> 16);
-            bytes[2] = (byte)(i >> 8);
-            bytes[3] = (byte)i;
+            bytes[offset] = (byte)(i >> 24);
+            bytes[offset + 1] = (byte)(i >> 16);
+            bytes[offset + 2] = (byte)(i >> 8);
+            bytes[offset + 3] = (byte)i;
         }
 
-        public static void ShortToBytes(short s, byte[] bytes)
+        public static void ShortToBytes(short s, byte[] bytes, int offset = 0)
         {
-            bytes[0] = (byte)(s >> 8);
-            bytes[1] = (byte)s;
+            bytes[offset] = (byte)(s >> 8);
+            bytes[offset + 1] = (byte)s;
         }
 
-        public static void FloatToBytes(float f, byte[] bytes)
+        public static void FloatToBytes(float f, byte[] bytes, int offset = 0)
         {
             var i = BitConverter.ToInt32(BitConverter.GetBytes(f), 0);
-            IntToBytes(i, bytes);
+            IntToBytes(i, bytes, offset);
         }
         
         public static int BytesToInt(byte[] bytes)

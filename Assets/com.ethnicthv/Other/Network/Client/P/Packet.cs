@@ -1,4 +1,4 @@
-﻿namespace com.ethnicthv.Other.Networking.P
+﻿namespace com.ethnicthv.Other.Network.Client.P
 {
     public class Packet
     {

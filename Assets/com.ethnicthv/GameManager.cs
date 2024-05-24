@@ -1,8 +1,8 @@
 ﻿using System;
 using com.ethnicthv.Inner;
+using com.ethnicthv.Networking;
 using com.ethnicthv.Other.Config;
 using com.ethnicthv.Other.Ev;
-using com.ethnicthv.Other.Networking;
 using com.ethnicthv.Outer;
 using UnityEngine;
 
@@ -42,6 +42,12 @@ namespace com.ethnicthv
         private void FixedUpdate()
         {
             SafeMechanism.Instance.DrainDispatchQueue();
+            NetworkManager.Instance.Tick();
+        }
+
+        private void OnDestroy()
+        {
+            NetworkManager.Instance.Dispose();
         }
 
         public static bool IsOnMainThread()

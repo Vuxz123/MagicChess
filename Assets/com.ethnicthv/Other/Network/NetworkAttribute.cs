@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Reflection;
 using JetBrains.Annotations;
 
-namespace com.ethnicthv.Other.Networking
+namespace com.ethnicthv.Other.Network
 {
     public class NetworkAttribute : Attribute
     {

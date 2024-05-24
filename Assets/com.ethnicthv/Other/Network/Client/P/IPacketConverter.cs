@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace com.ethnicthv.Other.Networking.P
+﻿namespace com.ethnicthv.Other.Network.Client.P
 {
     public interface IPacketConverter
     {

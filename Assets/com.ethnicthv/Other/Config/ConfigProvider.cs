@@ -25,6 +25,8 @@ namespace com.ethnicthv.Other.Config
     public class Config
     {
         public SafeMechanismConfig SafeMechanismConfig { get; set; }
+        
+        public NetworkConfig NetworkConfig { get; set; }
 
         public Config()
         {

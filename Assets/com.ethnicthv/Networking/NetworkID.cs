@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace com.ethnicthv.Other.Networking
+namespace com.ethnicthv.Networking
 {
     public class NetworkID
     {

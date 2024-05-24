@@ -4,5 +4,10 @@
     "EnqueuedTimeout": 10,
     "DequeueTimeout": 0,
     "PoolSize": 0
+  },
+  
+  "NetworkConfig": {
+    "MaxMessageSize": 1024,
+    "ProcessPerTick": 100
   }
 }
