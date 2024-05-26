@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Networking;
@@ -12,20 +11,24 @@ using Debug = com.ethnicthv.Other.Debug;
 
 namespace com.ethnicthv
 {
-    public class Test: MonoBehaviour
+    public class Test : MonoBehaviour
     {
         public TMP_Text cameraText;
         public TMP_Text actionText;
-        
+
         private int _cameraPos = 1;
-        
+
         //dirtiness
         private bool _isDirty = true;
+        private string ip = "";
+
+        private int port = 4444;
+
         private void Start()
         {
             //TestPacketWriterReader();
 
-            TestNetworkConversion();
+            //TestNetworkConversion();
         }
 
         private void Update()
@@ -82,42 +85,64 @@ namespace com.ethnicthv
             actionText.text = $"Action Type: {OnSquareSelectedListener.Action}";
             _isDirty = false;
         }
-        
+
+        private void OnGUI()
+        {
+            // A text field that changes the server IP
+            ip = GUI.TextField(new Rect(10, 60, 150, 20), ip);
+            port = int.Parse(GUI.TextField(new Rect(10, 80, 150, 20), port.ToString()));
+            // Create a button that create a Server
+            if (GUI.Button(new Rect(10, 100, 150, 20), "Create Server")) NetworkManager.Instance.StartServer(port);
+            // Create a button that connect to the server
+            if (GUI.Button(new Rect(10, 120, 150, 20), "Connect to Server")) NetworkManager.Instance.Connect(ip, port);
+
+            if (GUI.Button(new Rect(10, 140, 150, 20), "Send Message"))
+            {
+                var ev = new ChessBoardMoveEvent((1, 1), (2, 2));
+                NetworkManager.Instance.Send(ev);
+            }
+
+            if (GUI.Button(new Rect(10, 160, 150, 20), "Disconnect")) NetworkManager.Instance.Disconnect();
+
+            //Create a Text field print console log
+            //GUI.TextArea(new Rect(10, 160, 150, 100), UnityEngine.Debug.unityLogger.ToString());
+        }
+
         private void TestPacketWriterReader()
         {
             var a = new byte[]
             {
                 0b_0111_0001,
-                0b_1110_0001,
+                0b_1110_0001
             };
             var v = new byte[]
             {
                 0b_0000_0000,
                 0b_1100_0111,
                 0b_1101_1010,
-                0b_1111_1001,
+                0b_1111_1001
             };
-            
+
             const byte add = 0b_111;
-            
+
             // var temp = BytesUtil.GetByte(a[0] , 6, 2, true);
             // Debug.Log("Bytes: " + Convert.ToString(temp, 2).PadLeft(8, '0'));
-            
+
             // var temp = BytesUtil.AppendBytes(a , v, 10, 16);
             // Debug.Log("Bytes: \n" + string.Join("\n", temp.Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
             {
-                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                var watch = Stopwatch.StartNew();
                 var packet = PacketWriter.Create()
                     .Write((byte)10)
                     .Write(false)
                     .Write(true)
-                    .Write((short) 3103)
-                    .Write((byte) Byte.MaxValue)
+                    .Write((short)3103)
+                    .Write(byte.MaxValue)
                     .GetPacket();
                 Debug.Log(watch.Elapsed);
                 // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            
-                watch = System.Diagnostics.Stopwatch.StartNew();
+
+                watch = Stopwatch.StartNew();
                 var reader = PacketReader.Create(packet);
                 var temp1 = reader.ReadByte();
                 var temp2 = reader.ReadBool();
@@ -132,43 +157,20 @@ namespace com.ethnicthv
             // Debug.Log("Read: " + temp3);
             // Debug.Log("Read: " + temp4);
             // Debug.Log("Read: " + temp5);
-            
+
             {
-                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
+                var watch = Stopwatch.StartNew();
                 var packet = PacketWriter.Create()
                     .Write((byte)10)
                     .Write(false)
                     .Write(true)
-                    .Write((short) 3103)
-                    .Write((byte) Byte.MaxValue)
+                    .Write((short)3103)
+                    .Write(byte.MaxValue)
                     .GetPacket();
                 Debug.Log(watch.Elapsed);
                 // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            
-                watch = System.Diagnostics.Stopwatch.StartNew();
-                var reader = PacketReader.Create(packet);
-                var temp1 = reader.ReadByte();
-                var temp2 = reader.ReadBool();
-                var temp3 = reader.ReadBool();
-                var temp4 = reader.ReadShort();
-                var temp5 = reader.ReadByte();
-                Debug.Log(watch.Elapsed);
-                reader.Close();
-            }
-            
-            {
-                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
-                var packet = PacketWriter.Create()
-                    .Write((byte)10)
-                    .Write(false)
-                    .Write(true)
-                    .Write((short) 3103)
-                    .Write((byte) Byte.MaxValue)
-                    .GetPacket();
-                Debug.Log(watch.Elapsed);
-                // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
-            
-                watch = System.Diagnostics.Stopwatch.StartNew();
+
+                watch = Stopwatch.StartNew();
                 var reader = PacketReader.Create(packet);
                 var temp1 = reader.ReadByte();
                 var temp2 = reader.ReadBool();
@@ -180,17 +182,40 @@ namespace com.ethnicthv
             }
 
             {
-                System.Diagnostics.Stopwatch watch = System.Diagnostics.Stopwatch.StartNew();
-                for (int i = 0; i < 100000; i++)
+                var watch = Stopwatch.StartNew();
+                var packet = PacketWriter.Create()
+                    .Write((byte)10)
+                    .Write(false)
+                    .Write(true)
+                    .Write((short)3103)
+                    .Write(byte.MaxValue)
+                    .GetPacket();
+                Debug.Log(watch.Elapsed);
+                // Debug.Log("Packet: \n" + string.Join("\n", packet.GetBytes().Select(b => Convert.ToString(b, 2).PadLeft(8, '0'))));
+
+                watch = Stopwatch.StartNew();
+                var reader = PacketReader.Create(packet);
+                var temp1 = reader.ReadByte();
+                var temp2 = reader.ReadBool();
+                var temp3 = reader.ReadBool();
+                var temp4 = reader.ReadShort();
+                var temp5 = reader.ReadByte();
+                Debug.Log(watch.Elapsed);
+                reader.Close();
+            }
+
+            {
+                var watch = Stopwatch.StartNew();
+                for (var i = 0; i < 100000; i++)
                 {
                     var packet = PacketWriter.Create()
                         .Write((byte)10)
                         .Write(false)
                         .Write(true)
-                        .Write((short) 3103)
-                        .Write((byte) Byte.MaxValue)
+                        .Write((short)3103)
+                        .Write(byte.MaxValue)
                         .GetPacket();
-            
+
                     var reader = PacketReader.Create(packet);
                     var temp1 = reader.ReadByte();
                     var temp2 = reader.ReadBool();
@@ -199,53 +224,24 @@ namespace com.ethnicthv
                     var temp5 = reader.ReadByte();
                     reader.Close();
                 }
+
                 Debug.Log(watch.Elapsed);
             }
         }
 
         private void TestNetworkConversion()
         {
-            for (int v = 0; v < 10; v++)
+            for (var v = 0; v < 10; v++)
             {
-                var ev = new ChessBoardEvent(ChessBoardEvent.EventType.Check);
+                var ev = new ChessBoardMoveEvent((1, 1), (2, 2));
                 var i = NetworkManager.Instance;
-                Stopwatch watch = Stopwatch.StartNew();
-                var packet = i.PacketizeEvent(e: ev);
+                var watch = Stopwatch.StartNew();
+                var packet = i.PacketizeEvent(ev);
                 Debug.Log(watch.Elapsed);
                 watch = Stopwatch.StartNew();
                 var nev = i.ResolvePacket(packet);
                 Debug.Log(watch.Elapsed);
             }
-        }
-
-        private int port = 4444;
-        private string ip = "";
-        
-        private void OnGUI()
-        {
-            // A text field that changes the server IP
-            ip = GUI.TextField(new Rect(10, 60, 150, 20), ip);
-            port = int.Parse(GUI.TextField(new Rect(10, 80, 150, 20), port.ToString()));
-            // Create a button that create a Server
-            if (GUI.Button(new Rect(10, 100, 150, 20), "Create Server"))
-            {
-                NetworkManager.Instance.StartServer(port);
-            }
-            // Create a button that connect to the server
-            if (GUI.Button(new Rect(10, 120, 150, 20), "Connect to Server"))
-            {
-                NetworkManager.Instance.Connect(ip, port);
-            }
-
-            if (GUI.Button(new Rect(10, 140, 150, 20), "Send Message"))
-            {
-                var writer = PacketWriter.Create();
-                writer.Write(true);
-                NetworkManager.Instance.Send(writer.GetPacket());
-            }
-            
-            //Create a Text field print console log
-            //GUI.TextArea(new Rect(10, 160, 150, 100), UnityEngine.Debug.unityLogger.ToString());
         }
     }
 }

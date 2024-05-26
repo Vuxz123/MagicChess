@@ -1,4 +1,5 @@
 ﻿{
-  "chessboard": 0,
-  "piece": 1
+  "chessboard": 1,
+  "chessboard-move": 2,
+  "piece": 20
 }

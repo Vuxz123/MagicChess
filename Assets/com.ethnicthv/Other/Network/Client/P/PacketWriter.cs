@@ -59,7 +59,6 @@ namespace com.ethnicthv.Other.Network.Client.P
         public PacketWriter Write(int i)
         {
             BytesUtil.IntToBytes(i, _tempBuffer);
-            Debug.Log("Temp Bytes: \n" + string.Join("\n", _tempBuffer.Select(b => Convert.ToString((byte)b, 2).PadLeft(8, '0'))));
             return WriteBits(_tempBuffer, 32);
         }
 

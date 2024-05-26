@@ -20,14 +20,14 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
             _movementBehaviour = gameObject.AddComponent<ModifiablePositionMovementBehaviour>();
         }
 
-        private new void Update()
+        private void Update()
         {
             if (_actionQueue.TryDequeue(out var actionData))
             {
                 SendActionToInner(actionData);
             }
 
-            base.Update();
+            BaseUpdate();
         }
 
         protected override void Cleaning()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Threading.Tasks;
+using com.ethnicthv.Networking;
 using com.ethnicthv.Other.Config;
 using UnityEngine.Assertions;
 
@@ -34,6 +35,7 @@ namespace com.ethnicthv.Other.Ev
             _isInitialized = true;
 
             EventHandlerCrawler.Crawl(RegisterHandler);
+            
         }
 
         public void RegisterHandler(HandlerType handlerType, Type eventType, Delegate handler)
@@ -87,9 +89,9 @@ namespace com.ethnicthv.Other.Ev
             {
                 throw new System.Exception("Event dispatching is not on the main thread");
             }
-
             //Assert e not null
             Assert.IsNotNull(e);
+            
             var storage = handlerType switch
             {
                 HandlerType.Local => _local,
@@ -97,10 +99,21 @@ namespace com.ethnicthv.Other.Ev
                 HandlerType.Server => _server,
                 _ => throw new ArgumentOutOfRangeException(nameof(handlerType), handlerType, null)
             };
-            Debug.Log("EventManager: DispatchEvent " + e.GetType().Name);
+            Debug.Log($"EventManager : type {nameof(handlerType)} : DispatchEvent {e.GetType().Name}");
             try
             {
-                await Task.Run(() => { storage.DispatchEvent(e, callback); });
+                await Task.Run(() =>
+                {
+                    Debug.Log("EventManager-TaskThread: Dispatching!");
+                    var ma = NetworkManager.Instance;
+                    if (handlerType == HandlerType.Client && ma.IsNetworkActive && e is NetworkEvent ne)
+                    {
+                        Debug.Log("EventManager-TaskThread: Sending Network Event");
+                        ma.Send(ne);
+                    }
+                    Debug.Log($"EventManager-TaskThread: {storage.Count(e.GetType())} listeners for {e.GetType().Name}");
+                    storage.DispatchEvent(e, callback);
+                } );
             }
             catch (AggregateException exception)
             {

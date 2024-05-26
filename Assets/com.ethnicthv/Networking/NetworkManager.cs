@@ -8,24 +8,30 @@ using com.ethnicthv.Other.Network;
 using com.ethnicthv.Other.Network.Client;
 using com.ethnicthv.Other.Network.Client.P;
 using com.ethnicthv.Other.Network.Server;
+using JetBrains.Annotations;
 
 namespace com.ethnicthv.Networking
 {
     public class NetworkManager
     {
+        public Action OnConnectedClient;
+        public Action OnDisconnectedClient;
+        public Action<int> OnConnectedServer;
+        public Action<int> OnDisconnectedServer;
+
         private readonly NetworkID _netID;
 
         private static NetworkManager _instance;
-        
+
         private readonly Dictionary<Type, byte> _packetTypes = new();
         private readonly Dictionary<byte, NetworkEvent> _eventBuilders = new();
-        
+
         private int _maxMessageSize;
-        
+
         private int _processPerTick;
 
-        public static NetworkManager Instance => _instance ??= new NetworkManager();
-        
+        public static NetworkManager Instance => _instance ?? (_instance = new NetworkManager());
+
         private NetworkClient _networkClient;
         private NetworkServer _networkServer;
 
@@ -35,6 +41,11 @@ namespace com.ethnicthv.Networking
         private NetworkSender _sender;
         private NetworkTicker _ticker;
         
+        public bool IsServer => _state == NetworkState.Server;
+        public bool IsClient => _state == NetworkState.Client;
+        
+        public bool IsNetworkActive => _state != NetworkState.None;
+        
         private NetworkManager()
         {
             _netID = new NetworkID();
@@ -42,6 +53,7 @@ namespace com.ethnicthv.Networking
 
         public void Init()
         {
+            Debug.Log("NetworkManager created");
             var networkEvents = ReflectionHelper.GetClassesWithAttribute<NetworkAttribute>();
             var i = 0;
             foreach (var networkEvent in networkEvents)
@@ -57,12 +69,24 @@ namespace com.ethnicthv.Networking
             
             _maxMessageSize = ConfigProvider.GetConfig().NetworkConfig.MaxMessageSize;
             _processPerTick = ConfigProvider.GetConfig().NetworkConfig.ProcessPerTick;
+            
+            OnConnectedClient += OnCon2S;
+            OnDisconnectedClient += OnDis4S;
+            OnConnectedServer += OnCon2C;
+            OnDisconnectedServer += OnDis4C;
         }  
         
+        /// <summary>
+        /// Method to resolve the packet to the event
+        /// </summary>
+        /// <param name="packet">packet to be resolve</param>
+        /// <returns> The Event from this packet or null if is a Packet </returns>
+        [CanBeNull]
         public Event ResolvePacket(Packet packet)
         {
             var reader = PacketReader.Create(packet);
             var id = reader.ReadByte();
+            if(id == 0) return null;
             var obj = _eventBuilders[id].FromPacket(reader);
             reader.Close();
             return obj;
@@ -88,8 +112,7 @@ namespace com.ethnicthv.Networking
             
             if (_networkServer == null) CreateServer();
             
-            _networkServer.Start(port);
-            
+            if (!_networkServer.Start(port)) return;
             _state = NetworkState.Server;
             _sender = _networkServer;
             _ticker = _networkServer;
@@ -107,7 +130,7 @@ namespace com.ethnicthv.Networking
             // if _client is null then create a new client
             if(_networkClient == null) CreateClient();
 
-            _networkClient.Connect(ip, port);
+            _networkClient?.Connect(ip, port);
             
             _state = NetworkState.Client;
             _sender = _networkClient;
@@ -122,6 +145,8 @@ namespace com.ethnicthv.Networking
         {
             switch (_state)
             {
+                case NetworkState.None:
+                    break;
                 case NetworkState.Client:
                     _networkClient.Disconnect();
                     _networkClient = null;
@@ -130,11 +155,14 @@ namespace com.ethnicthv.Networking
                     _networkServer.Stop();
                     _networkServer = null;
                     break;
-                case NetworkState.None:
-                    break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException("_state", _state, "Invalid state.");
             }
+            
+            // After disconnecting the network, set the state to none
+            _state = NetworkState.None;
+            _sender = null;
+            _ticker = null;
         }
         
         /// <summary>
@@ -183,37 +211,86 @@ namespace com.ethnicthv.Networking
             None
         }
         
-        /// <summary>
-        /// Util method to create a client
-        /// </summary>
         private void CreateClient()
         {
-            _networkClient = new NetworkClient(_maxMessageSize);
-            _networkClient.OnConnected += () => Debug.Log("Connected to server.");
-            _networkClient.OnDisconnected += () => Debug.Log("Disconnected from server.");
-            _networkClient.OnDataReceived += (bytes) =>
+            _networkClient = new NetworkClient(_maxMessageSize)
             {
-                var packet = Packet.Create(bytes.Array);
-                // PacketReader reader = PacketReader.Create(packet);
-                // var a = reader.ReadBool();
-                Debug.Log($"Received: contain : bytes {bytes.Array}");
-                // reader.Close();
+                OnConnected = OnConnectedClient,
+                OnDisconnected = OnDisconnectedClient,
+                OnDataReceived = OnClientData
             };
         }
         
         private void CreateServer()
         {
-            _networkServer = new NetworkServer(_maxMessageSize);
-            _networkServer.OnConnected += (client) => Debug.Log($"Client connected: {client}");
-            _networkServer.OnDisconnected += (client) => Debug.Log($"Client disconnected: {client}");
-            _networkServer.OnData += (i, bytes) =>
+            _networkServer = new NetworkServer(_maxMessageSize)
             {
-                var packet = Packet.Create(bytes.Array);
-                // PacketReader reader = PacketReader.Create(packet);
-                // var a = reader.ReadBool();
-                Debug.Log($"Received from client {i}: contain : bytes {bytes.Array}");
-                // reader.Close();
+                OnConnected = OnConnectedServer,
+                OnDisconnected = OnDisconnectedServer,
+                OnData = OnServerData
             };
+        }
+        
+        private void OnServerData(int connectionId, ArraySegment<byte> bytes)
+        {
+            var packet = Packet.Create(bytes.Array);
+            var e = ResolvePacket(packet);
+            if (e != null)
+            {
+                Debug.Log($"NetworkManager: Received from client {connectionId}: contain {e}");
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, e);
+            }
+            else
+            {
+                Debug.Log("NetworkManager: Received packet from client");
+            }
+        }
+
+        private void OnClientData(ArraySegment<byte> bytes)
+        {
+            var packet = Packet.Create(bytes.Array);
+            var e = ResolvePacket(packet);
+            if (e != null)
+            {
+                Debug.Log($"NetworkManager: Received from server: contain {e}");
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Server, e);
+            }
+            else
+            {
+                Debug.Log("NetworkManager: Received packet from server");
+            }
+        }
+        
+        private void OnCon2S()
+        {
+            _state = NetworkState.Client;
+            _sender = _networkClient;
+            _ticker = _networkClient;
+        }
+        
+        private void OnDis4S()
+        {
+            _state = NetworkState.None;
+            _sender = null;
+            _ticker = null;
+        }
+        
+        private void OnCon2C(int i)
+        {
+            _state = NetworkState.Server;
+            _sender = _networkServer;
+            _ticker = _networkServer;
+            
+            Debug.Log($"NetworkManager: Client connected: {i}");
+        }
+        
+        private void OnDis4C(int i)
+        {
+            _state = NetworkState.None;
+            _sender = null;
+            _ticker = null;
+            
+            Debug.Log($"NetworkManager: Client disconnected: {i}");
         }
     }
 }

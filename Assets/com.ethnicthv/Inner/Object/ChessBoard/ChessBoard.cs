@@ -24,7 +24,7 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             _board[0, 5] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.White);
             _board[0, 6] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.White);
             _board[0, 7] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.White);
-            
+
             for (var i = 0; i < 8; i++)
             {
                 _board[1, i] = new Piece.Piece(Piece.Piece.Type.Pawn, Piece.Piece.Side.White);
@@ -81,21 +81,21 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
             try
             {
                 Debug.Log("ChessBoard: Call Client Event");
-                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, new ChessBoardEvent(
-                        ChessBoardEvent.EventType.Move,
-                        controller, (fromX, fromY), (toX, toY)),
+                var e = new ChessBoardMoveEvent(
+                    (fromX, fromY),
+                    (toX, toY)
+                );
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, e,
                     e => { });
                 Debug.Log("ChessBoard: Call Local Event");
-                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, new ChessBoardEvent(
-                        ChessBoardEvent.EventType.Move,
-                        controller, (fromX, fromY), (toX, toY)),
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, e,
                     e =>
                     {
-                        var dest = ((int, int))e.Data[2];
-                        var origin = ((int, int))e.Data[1];
+                        var dest = e.To;
+                        var origin = e.From;
                         //replace the piece in the board
-                        
-                        (_board[dest.Item1, dest.Item2], _board[origin.Item1, origin.Item2]) = 
+
+                        (_board[dest.Item1, dest.Item2], _board[origin.Item1, origin.Item2]) =
                             (_board[origin.Item1, origin.Item2], _board[dest.Item1, dest.Item2]);
                         Debug.Log("Callback: a piece has been moved!");
                     });

@@ -1,4 +1,5 @@
-﻿using com.ethnicthv.Inner;
+﻿using System;
+using com.ethnicthv.Inner;
 using com.ethnicthv.Outer.Util;
 using UnityEngine;
 using Debug = com.ethnicthv.Other.Debug;
@@ -28,6 +29,11 @@ namespace com.ethnicthv.Outer.Behaviour.Chess.Square
             var position = transform1.position;
             _highlight.transform.position = new Vector3(position.x,2.9075f,position.z);
             _highlight.SetActive(false);
+        }
+
+        public void Update()
+        {
+            BaseUpdate();
         }
 
         protected override void Cleaning()

@@ -11,7 +11,7 @@ namespace com.ethnicthv.Outer
         /// If you want to override this method, you must call base.Update() in the derived class. <br/>
         /// This a need, must be remembered. If you don't call this method, the object will not be cleaned. <br/>
         /// </summary>
-        public void Update()
+        public void BaseUpdate()
         {
             if (!IsDirty()) return;
             Cleaning();

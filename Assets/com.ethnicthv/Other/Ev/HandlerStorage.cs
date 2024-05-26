@@ -8,6 +8,11 @@ namespace com.ethnicthv.Other.Ev
     public class HandlerStorage
     {
         private readonly Dictionary<Type, LinkedList<Delegate>> _handlers;
+        
+        public int Count(Type eventType)
+        {
+            return _handlers.TryGetValue(eventType, out var handler) ? handler.Count : 0;
+        }
 
         protected internal HandlerStorage()
         {
@@ -34,8 +39,10 @@ namespace com.ethnicthv.Other.Ev
         
         public void DispatchEvent<T>(T e, CallbackFunction<T> callback = null) where T : Event
         {
-            var type = typeof(T);
+            var type = e.GetType();
+            Debug.Log("Dispatching event: " + type);
             if (!_handlers.ContainsKey(type)) return;
+            Debug.Log("Handlers found: " + _handlers[type].Count);
             foreach (var handler in _handlers[type])
             {
                 try
@@ -45,7 +52,7 @@ namespace com.ethnicthv.Other.Ev
                 catch (TargetInvocationException ex)
                 {
                     // Handle the exception
-                    throw new HandlerException("Error in handler", ex);
+                    Debug.LogError(ex.InnerException);
                 }
             }
             callback?.Invoke(e);
