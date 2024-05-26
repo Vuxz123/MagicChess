@@ -86,7 +86,7 @@ namespace com.ethnicthv.Networking
             if (_state == NetworkState.Client)
                 throw new InvalidOperationException("Cannot start server while client is connected.");
             
-            _networkServer ??= new NetworkServer(_maxMessageSize);
+            if (_networkServer == null) CreateServer();
             
             _networkServer.Start(port);
             
@@ -124,9 +124,11 @@ namespace com.ethnicthv.Networking
             {
                 case NetworkState.Client:
                     _networkClient.Disconnect();
+                    _networkClient = null;
                     break;
                 case NetworkState.Server:
                     _networkServer.Stop();
+                    _networkServer = null;
                     break;
                 case NetworkState.None:
                     break;
@@ -188,6 +190,30 @@ namespace com.ethnicthv.Networking
         {
             _networkClient = new NetworkClient(_maxMessageSize);
             _networkClient.OnConnected += () => Debug.Log("Connected to server.");
+            _networkClient.OnDisconnected += () => Debug.Log("Disconnected from server.");
+            _networkClient.OnDataReceived += (bytes) =>
+            {
+                var packet = Packet.Create(bytes.Array);
+                // PacketReader reader = PacketReader.Create(packet);
+                // var a = reader.ReadBool();
+                Debug.Log($"Received: contain : bytes {bytes.Array}");
+                // reader.Close();
+            };
+        }
+        
+        private void CreateServer()
+        {
+            _networkServer = new NetworkServer(_maxMessageSize);
+            _networkServer.OnConnected += (client) => Debug.Log($"Client connected: {client}");
+            _networkServer.OnDisconnected += (client) => Debug.Log($"Client disconnected: {client}");
+            _networkServer.OnData += (i, bytes) =>
+            {
+                var packet = Packet.Create(bytes.Array);
+                // PacketReader reader = PacketReader.Create(packet);
+                // var a = reader.ReadBool();
+                Debug.Log($"Received from client {i}: contain : bytes {bytes.Array}");
+                // reader.Close();
+            };
         }
     }
 }

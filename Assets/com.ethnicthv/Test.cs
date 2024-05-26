@@ -1,21 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Event;
-using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Networking;
 using com.ethnicthv.Other.Network.Client.P;
-using com.ethnicthv.Outer;
-using com.ethnicthv.Outer.Event;
 using com.ethnicthv.Outer.Event.Listener;
 using com.ethnicthv.Outer.Util.Camera;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using Debug = com.ethnicthv.Other.Debug;
-using Object = UnityEngine.Object;
 
 namespace com.ethnicthv
 {
@@ -223,6 +216,36 @@ namespace com.ethnicthv
                 var nev = i.ResolvePacket(packet);
                 Debug.Log(watch.Elapsed);
             }
+        }
+
+        private int port = 4444;
+        private string ip = "";
+        
+        private void OnGUI()
+        {
+            // A text field that changes the server IP
+            ip = GUI.TextField(new Rect(10, 60, 150, 20), ip);
+            port = int.Parse(GUI.TextField(new Rect(10, 80, 150, 20), port.ToString()));
+            // Create a button that create a Server
+            if (GUI.Button(new Rect(10, 100, 150, 20), "Create Server"))
+            {
+                NetworkManager.Instance.StartServer(port);
+            }
+            // Create a button that connect to the server
+            if (GUI.Button(new Rect(10, 120, 150, 20), "Connect to Server"))
+            {
+                NetworkManager.Instance.Connect(ip, port);
+            }
+
+            if (GUI.Button(new Rect(10, 140, 150, 20), "Send Message"))
+            {
+                var writer = PacketWriter.Create();
+                writer.Write(true);
+                NetworkManager.Instance.Send(writer.GetPacket());
+            }
+            
+            //Create a Text field print console log
+            //GUI.TextArea(new Rect(10, 160, 150, 100), UnityEngine.Debug.unityLogger.ToString());
         }
     }
 }

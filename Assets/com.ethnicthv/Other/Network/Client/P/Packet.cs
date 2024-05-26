@@ -26,6 +26,13 @@
             return packet;
         }
         
+        public static Packet Create(byte[] bytes)
+        {
+            var packet = Create();
+            System.Buffer.BlockCopy(bytes, 0, packet._bytes, 0, bytes.Length);
+            return packet;
+        }
+        
         public void Clear()
         {
             lock (Pool)
