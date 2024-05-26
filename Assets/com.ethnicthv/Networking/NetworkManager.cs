@@ -202,6 +202,7 @@ namespace com.ethnicthv.Networking
 
         public void Dispose()
         {
+            Disconnect();
         }
 
         public enum NetworkState

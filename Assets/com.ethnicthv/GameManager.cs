@@ -13,19 +13,22 @@ namespace com.ethnicthv
         public static bool IsDebug { get; private set; }
         private static int _mainThreadId;
         
-        private GameManagerInner _gameManagerInner;
-        private GameManagerOuter _gameManagerOuter;
+        private static GameManagerInner _gameManagerInner;
+        private static GameManagerOuter _gameManagerOuter;
+        
+        private static bool _isInitialized = false;
 
         private void Awake()
         {
+            if(_isInitialized) return;
             _mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
             
             IsDebug = Debug.isDebugBuild;
             
-            #pragma warning disable CS0618 // Type or member is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
             _gameManagerOuter = GameManagerOuter.instance;
             _gameManagerInner = GameManagerInner.instance;
-            #pragma warning restore CS0618 // Type or member is obsolete
+#pragma warning restore CS0618 // Type or member is obsolete
             
             _gameManagerOuter.GameManagerInner = _gameManagerInner;
             _gameManagerInner.GameManagerOuter = _gameManagerOuter;
@@ -37,6 +40,7 @@ namespace com.ethnicthv
             SafeMechanism.Init();
             
             NetworkManager.Instance.Init();
+            _isInitialized = true;
         }
 
         private void FixedUpdate()
@@ -45,7 +49,7 @@ namespace com.ethnicthv
             NetworkManager.Instance.Tick();
         }
 
-        private void OnDestroy()
+        private void OnApplicationQuit()
         {
             NetworkManager.Instance.Dispose();
         }
