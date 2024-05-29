@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
 
-namespace com.ethnicthv.Other.Network.Client.P
+namespace com.ethnicthv.Other.Network.P
 {
     /// <summary>
     /// Thread-Safe PacketWriter class that can be used to write data to a Packet object. <br/>

@@ -49,6 +49,12 @@ namespace com.ethnicthv.Outer.Behaviour.Movement
         }
         
         private void RecalculateDistance() => _distance = Vector3.Distance(transform.position, _target);
+        
+        public void MoveToNotAnimated(Vector3 target)
+        {
+            ResetMovement();
+            transform.position = target;
+        }
 
         public void MoveTo(Vector3 target, float s, InterpolationFunction function = null)
         {

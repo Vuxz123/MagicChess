@@ -43,11 +43,13 @@ namespace com.ethnicthv.Other.Ev
             Debug.Log("Dispatching event: " + type);
             if (!_handlers.ContainsKey(type)) return;
             Debug.Log("Handlers found: " + _handlers[type].Count);
+            var isCancelled = false;
             foreach (var handler in _handlers[type])
             {
                 try
                 {
-                    if (!(bool)handler.DynamicInvoke(e)) break;
+                    isCancelled = !(bool) handler.DynamicInvoke(e);
+                    if (isCancelled) break;
                 }
                 catch (TargetInvocationException ex)
                 {
@@ -55,7 +57,7 @@ namespace com.ethnicthv.Other.Ev
                     Debug.LogError(ex.InnerException);
                 }
             }
-            callback?.Invoke(e);
+            if(isCancelled) callback?.Invoke(e);
         }
     }
 }

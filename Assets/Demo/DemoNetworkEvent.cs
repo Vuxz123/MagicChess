@@ -1,6 +1,6 @@
 ﻿using com.ethnicthv.Other;
 using com.ethnicthv.Other.Ev;
-using com.ethnicthv.Other.Network.Client.P;
+using com.ethnicthv.Other.Network.P;
 
 namespace Demo
 {

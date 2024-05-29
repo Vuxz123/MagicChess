@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Threading;
 using com.ethnicthv.Other.Network.Client;
-using com.ethnicthv.Other.Network.Client.P;
+using com.ethnicthv.Other.Network.P;
 
 namespace com.ethnicthv.Other.Network
 {

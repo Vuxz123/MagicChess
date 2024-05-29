@@ -116,6 +116,11 @@ namespace com.ethnicthv.Inner.Object.Piece
         {
             return $"{nameof(_id)}: {_id}, {nameof(_type)}: {_type}, {nameof(_side)}: {_side}, {nameof(_isMovable)}: {_isMovable}, {nameof(_isDefendable)}: {_isDefendable}, {nameof(_isAttackable)}: {_isAttackable}, {nameof(_isDead)}: {_isDead}";
         }
+        
+        public string ToName()
+        {
+            return $"{_side} {_type}";
+        }
     }
     
     public class  ActionType

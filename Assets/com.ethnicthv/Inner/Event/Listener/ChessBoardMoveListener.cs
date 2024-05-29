@@ -9,10 +9,10 @@ namespace com.ethnicthv.Inner.Event.Listener
     [EventListener(eventType: typeof(ChessBoardMoveEvent))]
     public class ChessBoardMoveListener
     {
-        [LocalHandler]
-        public bool HandleEventLocal(ChessBoardMoveEvent e)
+        [ClientNetworkingSender]
+        public bool HandleEventForSender(ChessBoardMoveEvent e)
         {
-            Debug.Log("HandleEventLocal: " + e);
+            Debug.Log("HandleEventForSender: " + e);
             var origin = e.From;
             var destination = e.To;
             var outer = GameManagerInner.Instance.Board[origin].Outer;
@@ -28,8 +28,6 @@ namespace com.ethnicthv.Inner.Event.Listener
             var origin = e.From;
             var destination = e.To;
             var board = GameManagerInner.Instance.Board;
-            
-            // update Outer board
             var outer = board[origin].Outer;
             var outerDest = GameManagerOuter.ConvertInnerToOuterPos(destination);
             outer.SetPosToSquare(outerDest);

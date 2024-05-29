@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace com.ethnicthv.Other.Network.Client.P
+namespace com.ethnicthv.Other.Network.P
 {
     /// <summary>
     /// Thread-Safe PacketReader class that can be used to read data from a Packet object. <br/>

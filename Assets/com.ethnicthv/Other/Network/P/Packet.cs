@@ -1,7 +1,6 @@
-﻿using UnityEngine.ProBuilder;
-using Math = System.Math;
+﻿using Math = System.Math;
 
-namespace com.ethnicthv.Other.Network.Client.P
+namespace com.ethnicthv.Other.Network.P
 {
     public class Packet
     {

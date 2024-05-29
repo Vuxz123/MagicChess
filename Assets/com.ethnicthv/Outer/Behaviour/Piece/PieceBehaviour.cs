@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Outer.Behaviour.Movement;
-using UnityEngine;
 
 namespace com.ethnicthv.Outer.Behaviour.Piece
 {
@@ -13,6 +12,7 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
         private Queue<ActionData> _actionQueue;
 
         private (int, int) _newPos;
+        private bool _animated = true;
 
         private void Start()
         {
@@ -32,10 +32,17 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 
         protected override void Cleaning()
         {
-            _movementBehaviour.MoveTo(GameManagerOuter.Instance.ChessBoard
+            var pos = GameManagerOuter.Instance.ChessBoard
                 .GetSquare(_newPos.Item1, _newPos.Item2)
                 .transform
-                .position, 1F, InterpolationFunctions.CurveUp1);
+                .position;
+            if(_animated == false)
+            {
+                _movementBehaviour.MoveToNotAnimated(pos);
+            }else
+            {
+                _movementBehaviour.MoveTo(pos, 1F, InterpolationFunctions.CurveUp1);
+            }
         }
 
         public void SetPiece(Inner.Object.Piece.Piece piece)
@@ -53,15 +60,16 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
             return _movementBehaviour;
         }
 
-        public void SetPosToSquare(int x, int y)
+        public void SetPosToSquare(int x, int y, bool animated = true)
         {
             MarkDirty();
             _newPos = (x, y);
+            _animated = animated;
         }
 
-        public void SetPosToSquare((int, int) pos)
+        public void SetPosToSquare((int, int) pos, bool animated = true)
         {
-            SetPosToSquare(pos.Item1, pos.Item2);
+            SetPosToSquare(pos.Item1, pos.Item2, animated);
         }
 
         public Inner.Object.Piece.Piece Inner { get; private set; }
@@ -76,18 +84,18 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 
         private void SendActionToInner(ActionData actionData)
         {
-            Inner.DoAction(actionData.at, actionData.d);
+            Inner.DoAction(actionData.At, actionData.D);
         }
 
         private class ActionData
         {
-            public ActionType at;
-            public object[] d;
+            public readonly ActionType At;
+            public readonly object[] D;
 
             internal ActionData(ActionType at, object[] d)
             {
-                this.at = at;
-                this.d = d;
+                At = at;
+                D = d;
             }
         }
     }

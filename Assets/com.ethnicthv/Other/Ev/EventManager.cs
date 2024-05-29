@@ -40,6 +40,7 @@ namespace com.ethnicthv.Other.Ev
 
         public void RegisterHandler(HandlerType handlerType, Type eventType, Delegate handler)
         {
+            Debug.Log($"EventManager: Registering {handlerType} handler for {eventType.Name}");
             var storage = handlerType switch
             {
                 HandlerType.Local => _local,
@@ -105,14 +106,14 @@ namespace com.ethnicthv.Other.Ev
                 await Task.Run(() =>
                 {
                     Debug.Log("EventManager-TaskThread: Dispatching!");
-                    var ma = NetworkManager.Instance;
-                    if (handlerType == HandlerType.Client && ma.IsNetworkActive && e is NetworkEvent ne)
-                    {
-                        Debug.Log("EventManager-TaskThread: Sending Network Event");
-                        ma.Send(ne);
-                    }
-                    Debug.Log($"EventManager-TaskThread: {storage.Count(e.GetType())} listeners for {e.GetType().Name}");
+                    Debug.Log($"EventManager-TaskThread: {storage.Count(e.GetType())} {e.GetType()} listeners for {e.GetType().Name}");
                     storage.DispatchEvent(e, callback);
+                    var ma = NetworkManager.Instance;
+                    // After dispatching the event, check if the handlerType is Client and the Network is active
+                    // If the conditions are met, send the event to the network
+                    if (handlerType != HandlerType.Client || !ma.IsNetworkActive || e is not NetworkEvent ne) return;
+                    Debug.Log("EventManager-TaskThread: Sending Network Event");
+                    ma.Send(ne);
                 } );
             }
             catch (AggregateException exception)

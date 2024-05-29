@@ -2,7 +2,7 @@
 using com.ethnicthv.Inner;
 using com.ethnicthv.Inner.Event;
 using com.ethnicthv.Networking;
-using com.ethnicthv.Other.Network.Client.P;
+using com.ethnicthv.Other.Network.P;
 using com.ethnicthv.Outer.Event.Listener;
 using com.ethnicthv.Outer.Util.Camera;
 using TMPro;
@@ -236,7 +236,7 @@ namespace com.ethnicthv
                 var ev = new ChessBoardMoveEvent((1, 1), (2, 2));
                 var i = NetworkManager.Instance;
                 var watch = Stopwatch.StartNew();
-                var packet = i.PacketizeEvent(ev);
+                var packet = i.PacketizeObject(ev);
                 Debug.Log(watch.Elapsed);
                 watch = Stopwatch.StartNew();
                 var nev = i.ResolvePacket(packet);

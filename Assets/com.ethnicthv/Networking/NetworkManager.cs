@@ -6,7 +6,7 @@ using com.ethnicthv.Other.Config;
 using com.ethnicthv.Other.Ev;
 using com.ethnicthv.Other.Network;
 using com.ethnicthv.Other.Network.Client;
-using com.ethnicthv.Other.Network.Client.P;
+using com.ethnicthv.Other.Network.P;
 using com.ethnicthv.Other.Network.Server;
 using JetBrains.Annotations;
 
@@ -92,10 +92,11 @@ namespace com.ethnicthv.Networking
             return obj;
         }
         
-        public Packet PacketizeEvent(NetworkEvent e)
+        public Packet PacketizeObject(NetworkObject e)
         {
             var writer = PacketWriter.Create();
-            writer.Write(_packetTypes[e.GetType()]);
+            if(e is NetworkMessage) writer.Write(0);
+            else writer.Write(_packetTypes[e.GetType()]);
             e.ToPacket(writer);
             return writer.GetPacket();
         }
@@ -169,9 +170,9 @@ namespace com.ethnicthv.Networking
         /// Send a network event to the server
         /// </summary>
         /// <param name="e"> event to be sent </param>
-        public void Send(NetworkEvent e)
+        public void Send(NetworkObject e)
         {
-            var packet = PacketizeEvent(e);
+            var packet = PacketizeObject(e);
             Send(packet);
         }
         
@@ -239,7 +240,7 @@ namespace com.ethnicthv.Networking
             if (e != null)
             {
                 Debug.Log($"NetworkManager: Received from client {connectionId}: contain {e}");
-                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, e);
+                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Server, e);
             }
             else
             {

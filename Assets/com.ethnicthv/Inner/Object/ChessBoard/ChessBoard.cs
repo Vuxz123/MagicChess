@@ -85,20 +85,19 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
                     (fromX, fromY),
                     (toX, toY)
                 );
+                // dispatch the event for sending message to network
                 EventManager.Instance.DispatchEvent(EventManager.HandlerType.Client, e,
-                    e => { });
-                Debug.Log("ChessBoard: Call Local Event");
-                EventManager.Instance.DispatchEvent(EventManager.HandlerType.Local, e,
                     e =>
                     {
                         var dest = e.To;
                         var origin = e.From;
+                        
                         //replace the piece in the board
-
                         (_board[dest.Item1, dest.Item2], _board[origin.Item1, origin.Item2]) =
                             (_board[origin.Item1, origin.Item2], _board[dest.Item1, dest.Item2]);
                         Debug.Log("Callback: a piece has been moved!");
-                    });
+                    }
+                );
             }
             catch (System.Exception e)
             {
@@ -109,7 +108,25 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
 
         public override string ToString()
         {
-            return $"{nameof(_board)}: {_board}";
+            // print the board
+            var str = "";
+            for (var i = 0; i < 8; i++)
+            {
+                for (var j = 0; j < 8; j++)
+                {
+                    if (_board[i, j] == null)
+                    {
+                        str += "null ";
+                        continue;
+                    }
+
+                    str += _board[i, j].ToName() + " ";
+                }
+
+                str += "\n";
+            }
+
+            return $"ChessBoard: \n{str}";
         }
     }
 }
