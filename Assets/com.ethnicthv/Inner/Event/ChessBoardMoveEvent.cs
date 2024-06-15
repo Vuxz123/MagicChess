@@ -6,7 +6,7 @@ using com.ethnicthv.Outer;
 namespace com.ethnicthv.Inner.Event
 {
     [Network(eventNetworkName: "chessboard-move")]
-    public class ChessBoardMoveEvent : NetworkEvent, INeedConfirm
+    public class ChessBoardMoveEvent : NetworkEvent
     {
         public (int,int) From { get; private set; }
         public (int,int) To { get; private set; }
@@ -41,20 +41,6 @@ namespace com.ethnicthv.Inner.Event
         public override string ToString()
         {
             return $"ChessBoardMoveEvent: {From} -> {To}";
-        }
-
-        public void Rollback()
-        {
-            // rollback the move behaviour
-            
-            // swap the pieces back in the inner board
-            var board = GameManagerInner.Instance.Board;
-            (board[From.Item1, From.Item2], board[To.Item1, To.Item2]) =
-                (board[To.Item1, To.Item2], board[From.Item1, From.Item2]);
-            
-            // set the outer position back
-            var outerFrom = GameManagerInner.Instance.Board[From].Outer;
-            outerFrom.SetPosToSquare(GameManagerOuter.ConvertInnerToOuterPos(To), false);
         }
     }
 }
