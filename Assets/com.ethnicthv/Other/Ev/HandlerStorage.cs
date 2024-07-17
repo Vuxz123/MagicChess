@@ -41,10 +41,10 @@ namespace com.ethnicthv.Other.Ev
         {
             var type = e.GetType();
             Debug.Log("Dispatching event: " + type);
-            if (!_handlers.ContainsKey(type)) return;
-            Debug.Log("Handlers found: " + _handlers[type].Count);
+            if (!_handlers.TryGetValue(type, out var handlerList)) return;
+            Debug.Log("Handlers found: " + handlerList.Count);
             var isCancelled = false;
-            foreach (var handler in _handlers[type])
+            foreach (var handler in handlerList)
             {
                 try
                 {
@@ -57,7 +57,7 @@ namespace com.ethnicthv.Other.Ev
                     Debug.LogError(ex.InnerException);
                 }
             }
-            if(isCancelled) callback?.Invoke(e);
+            if(!isCancelled) callback?.Invoke(e);
         }
     }
 }

@@ -13,11 +13,6 @@ namespace com.ethnicthv.Inner.Event.Listener
         public bool HandleEventForSender(ChessBoardMoveEvent e)
         {
             Debug.Log("HandleEventForSender: " + e);
-            var origin = e.From;
-            var destination = e.To;
-            var outer = GameManagerInner.Instance.Board[origin].Outer;
-            var outerDest = GameManagerOuter.ConvertInnerToOuterPos(destination);
-            outer.SetPosToSquare(outerDest);
             return true;
         }
         
@@ -25,16 +20,20 @@ namespace com.ethnicthv.Inner.Event.Listener
         public bool HandleEventServer(ChessBoardMoveEvent e)
         {
             Debug.Log("HandleEventServer: " + e);
-            var origin = e.From;
             var destination = e.To;
+            var origin = e.From;
             var board = GameManagerInner.Instance.Board;
-            var outer = board[origin].Outer;
+                        
+            // update the outer board
+            var outer = GameManagerInner.Instance.Board[origin].Outer;
             var outerDest = GameManagerOuter.ConvertInnerToOuterPos(destination);
             outer.SetPosToSquare(outerDest);
-            
-            // update Inner board
-            (board[destination.Item1, destination.Item2], board[origin.Item1, origin.Item2]) =
-                (board[origin.Item1, origin.Item2], board[destination.Item1, destination.Item2]);
+                        
+            // replace the piece in the board
+            var temp = board[destination.Item1, destination.Item2];
+            board[destination.Item1, destination.Item2] = board[origin.Item1, origin.Item2];
+            board[origin.Item1, origin.Item2] = temp;
+            Debug.Log("HandleEventServer: a piece has been moved!");
             return true;
         }
     }

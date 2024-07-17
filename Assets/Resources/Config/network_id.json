@@ -1,5 +1,6 @@
 ﻿{
   "chessboard": 1,
   "chessboard-move": 2,
-  "piece": 20
+  "piece": 20,
+  "piece-attack-op": 21
 }

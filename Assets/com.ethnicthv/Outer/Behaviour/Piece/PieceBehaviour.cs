@@ -22,12 +22,12 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
 
         private void Update()
         {
+            BaseUpdate();
+            
             if (_actionQueue.TryDequeue(out var actionData))
             {
                 SendActionToInner(actionData);
             }
-
-            BaseUpdate();
         }
 
         protected override void Cleaning()
@@ -36,13 +36,8 @@ namespace com.ethnicthv.Outer.Behaviour.Piece
                 .GetSquare(_newPos.Item1, _newPos.Item2)
                 .transform
                 .position;
-            if(_animated == false)
-            {
-                _movementBehaviour.MoveToNotAnimated(pos);
-            }else
-            {
-                _movementBehaviour.MoveTo(pos, 1F, InterpolationFunctions.CurveUp1);
-            }
+            if(_animated == false) _movementBehaviour.MoveToNotAnimated(pos);
+            else _movementBehaviour.MoveTo(pos, 1F, InterpolationFunctions.CurveUp1);
         }
 
         public void SetPiece(Inner.Object.Piece.Piece piece)

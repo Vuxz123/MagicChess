@@ -11,6 +11,8 @@ namespace com.ethnicthv.Inner.Event
         public readonly (int, int) AttackerPos;
         public readonly (int, int) AttackedPos;
         
+        public PieceAttackOnPieceEvent() { }
+        
         public PieceAttackOnPieceEvent(int damage)
         {
         }

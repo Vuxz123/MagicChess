@@ -1,10 +1,10 @@
 ﻿using System;
 using com.ethnicthv.Inner.Object.ChessBoard;
-using com.ethnicthv.Inner.Object.Piece;
 using com.ethnicthv.Inner.Object.Piece.Action;
+using com.ethnicthv.Inner.Object.Player;
+using com.ethnicthv.Inner.Object.Player.Faction;
 using com.ethnicthv.Outer;
 using com.ethnicthv.Outer.Util;
-using UnityEngine;
 
 namespace com.ethnicthv.Inner
 {
@@ -17,6 +17,9 @@ namespace com.ethnicthv.Inner
 
         public static IGameManagerInner Instance => instance;
         
+        private PlayerManager _playerManager;
+        private FactionManager _factionManager;
+        
         private ChessBoard _chessBoard;
 
         private GameManagerInner()
@@ -26,6 +29,9 @@ namespace com.ethnicthv.Inner
         
         private void Init()
         {
+            _playerManager = new PlayerManager();
+            _factionManager = new FactionManager();
+            
             PieceAction.Setup();
         }
 
@@ -36,12 +42,8 @@ namespace com.ethnicthv.Inner
         }
 
         public IGameManagerOuter GameManagerOuter { get; set; }
-        public void TestInput()
-        {
-            GameManagerOuter.ChessBoard.TestCall();
-        }
 
-        public ChessBoard Board => _chessBoard;
+        public ChessBoard Board => _chessBoard ?? throw new NullReferenceException("ChessBoard is not created yet.");
         
         public static (int, int) ConvertOuterToInnerPos(CbPos pos)
         {
@@ -57,5 +59,14 @@ namespace com.ethnicthv.Inner
         {
             return (y, x);
         }
+
+        #region Test
+
+        public void TestInput()
+        {
+            GameManagerOuter.ChessBoard.TestCall();
+        }
+
+        #endregion
     }
 }
