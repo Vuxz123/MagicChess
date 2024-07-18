@@ -17,6 +17,8 @@ namespace com.ethnicthv.Inner
 
         public static IGameManagerInner Instance => instance;
         
+        private PieceActionManager _pieceActionManager;
+        
         private PlayerManager _playerManager;
         private FactionManager _factionManager;
         
@@ -29,10 +31,10 @@ namespace com.ethnicthv.Inner
         
         private void Init()
         {
+            _pieceActionManager = new PieceActionManager();
+            
             _playerManager = new PlayerManager();
             _factionManager = new FactionManager();
-            
-            PieceAction.Setup();
         }
 
         public ChessBoard CreateChessBoard()
@@ -41,10 +43,31 @@ namespace com.ethnicthv.Inner
             return _chessBoard;
         }
 
+        public void StartGame()
+        {
+            var playerFactionID = _playerManager.Player.FactionID;
+            var opponentFactionID = _playerManager.Opponent.FactionID;
+            var playerFaction = _factionManager.GetFaction(playerFactionID);
+            var opponentFaction = _factionManager.GetFaction(opponentFactionID);
+            
+            playerFaction.RegisterFaction();
+            opponentFaction.RegisterFaction();
+
+            CreateChessBoard();
+            
+            playerFaction.SetupPieces(true , _chessBoard);
+            opponentFaction.SetupPieces(false, _chessBoard);
+            
+            GameManagerOuter.ChessBoard.SetupBoard(_chessBoard);
+        }
+
         public IGameManagerOuter GameManagerOuter { get; set; }
 
         public ChessBoard Board => _chessBoard ?? throw new NullReferenceException("ChessBoard is not created yet.");
-        
+        public PieceActionManager PieceActionManager => _pieceActionManager;
+        public PlayerManager PlayerManager => _playerManager;
+        public FactionManager FactionManager => _factionManager;
+
         public static (int, int) ConvertOuterToInnerPos(CbPos pos)
         {
             return (pos.Y, pos.X);

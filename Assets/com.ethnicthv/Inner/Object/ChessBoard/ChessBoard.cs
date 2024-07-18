@@ -17,29 +17,8 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
         public ChessBoard()
         {
             _board = new Piece.Piece[8, 8];
-            _board[0, 0] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.White);
-            _board[0, 1] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.White);
-            _board[0, 2] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.White);
-            _board[0, 4] = new Piece.Piece(Piece.Piece.Type.Queen, Piece.Piece.Side.White);
-            _board[0, 3] = new Piece.Piece(Piece.Piece.Type.King, Piece.Piece.Side.White);
-            _board[0, 5] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.White);
-            _board[0, 6] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.White);
-            _board[0, 7] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.White);
 
-            for (var i = 0; i < 8; i++)
-            {
-                _board[1, i] = new Piece.Piece(Piece.Piece.Type.Pawn, Piece.Piece.Side.White);
-                _board[6, i] = new Piece.Piece(Piece.Piece.Type.Pawn, Piece.Piece.Side.Black);
-            }
-
-            _board[7, 0] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.Black);
-            _board[7, 1] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.Black);
-            _board[7, 2] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.Black);
-            _board[7, 3] = new Piece.Piece(Piece.Piece.Type.Queen, Piece.Piece.Side.Black);
-            _board[7, 4] = new Piece.Piece(Piece.Piece.Type.King, Piece.Piece.Side.Black);
-            _board[7, 5] = new Piece.Piece(Piece.Piece.Type.Bishop, Piece.Piece.Side.Black);
-            _board[7, 6] = new Piece.Piece(Piece.Piece.Type.Knight, Piece.Piece.Side.Black);
-            _board[7, 7] = new Piece.Piece(Piece.Piece.Type.Rook, Piece.Piece.Side.Black);
+            
         }
 
         public IChessBoardOuter Outer
@@ -100,9 +79,7 @@ namespace com.ethnicthv.Inner.Object.ChessBoard
                         outer.SetPosToSquare(outerDest);
                         
                         // replace the piece in the board
-                        var temp = board[destination.Item1, destination.Item2];
-                        board[destination.Item1, destination.Item2] = board[origin.Item1, origin.Item2];
-                        board[origin.Item1, origin.Item2] = temp;
+                        (board[destination.Item1, destination.Item2], board[origin.Item1, origin.Item2]) = (board[origin.Item1, origin.Item2], board[destination.Item1, destination.Item2]);
                         Debug.Log("Callback: a piece has been moved!");
                     }
                 );

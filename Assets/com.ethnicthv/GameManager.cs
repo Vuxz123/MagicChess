@@ -16,10 +16,11 @@ namespace com.ethnicthv
         private static GameManagerInner _gameManagerInner;
         private static GameManagerOuter _gameManagerOuter;
         
-        private static bool _isInitialized = false;
+        private static bool _isInitialized;
 
         private void Awake()
         {
+            DontDestroyOnLoad(this);
             if(_isInitialized) return;
             _mainThreadId = System.Threading.Thread.CurrentThread.ManagedThreadId;
             
@@ -57,6 +58,11 @@ namespace com.ethnicthv
         public static bool IsOnMainThread()
         {
             return System.Threading.Thread.CurrentThread.ManagedThreadId == _mainThreadId;
+        }
+
+        public static void StartGame()
+        {
+            GameManagerInner.Instance.StartGame();
         }
     }
 }

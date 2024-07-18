@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using com.ethnicthv.Inner;
+using com.ethnicthv.Inner.Object.ChessBoard;
 using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Outer.Behaviour.Piece;
 using com.ethnicthv.Outer.Util;
@@ -51,6 +52,11 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
         public IPiece GetPiece(CbPos pos)
         {
             return GetPiece(pos.X, pos.Y);
+        }
+
+        public void SetupBoard(ChessBoard board)
+        {
+            _chessInitBehaviour.InitPieces(board);
         }
 
         public void TestCall()

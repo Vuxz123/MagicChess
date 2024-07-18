@@ -5,10 +5,11 @@ using PieceInner = com.ethnicthv.Inner.Object.Piece;
 
 namespace com.ethnicthv.Outer.Util
 {
+    //TODO: Add a way to load prefabs from a folder and config file
     public static class PiecePrefabProvider
     {
-        private static Dictionary<PieceInner.Piece.Type, GameObject> _prefabCache = new();
-        public static GameObject GetPiecePrefab(PieceInner.Piece.Type type)
+        private static Dictionary<int, GameObject> _prefabCache = new();
+        public static GameObject GetPiecePrefab(int type)
         {
             if (_prefabCache.TryGetValue(type, out var prefab)) return prefab;
             prefab = LoadPrefab(type);
@@ -23,16 +24,16 @@ namespace com.ethnicthv.Outer.Util
             return prefab;
         }
         
-        private static GameObject LoadPrefab(PieceInner.Piece.Type type)
+        private static GameObject LoadPrefab(int type)
         {
             return type switch
             {
-                PieceInner.Piece.Type.Pawn => Resources.Load<GameObject>("Prefab/Chess/Pieces/Pawn"),
-                PieceInner.Piece.Type.Rook => Resources.Load<GameObject>("Prefab/Chess/Pieces/Rook"),
-                PieceInner.Piece.Type.Knight => Resources.Load<GameObject>("Prefab/Chess/Pieces/Knight"),
-                PieceInner.Piece.Type.Bishop => Resources.Load<GameObject>("Prefab/Chess/Pieces/Bishop"),
-                PieceInner.Piece.Type.Queen => Resources.Load<GameObject>("Prefab/Chess/Pieces/Queen"),
-                PieceInner.Piece.Type.King => Resources.Load<GameObject>("Prefab/Chess/Pieces/King"),
+                6 => Resources.Load<GameObject>("Prefab/Chess/Pieces/Pawn"),
+                5 => Resources.Load<GameObject>("Prefab/Chess/Pieces/Rook"),
+                4 => Resources.Load<GameObject>("Prefab/Chess/Pieces/Knight"),
+                3 => Resources.Load<GameObject>("Prefab/Chess/Pieces/Bishop"),
+                2 => Resources.Load<GameObject>("Prefab/Chess/Pieces/Queen"),
+                1 => Resources.Load<GameObject>("Prefab/Chess/Pieces/King"),
                 _ => null
             };
         }

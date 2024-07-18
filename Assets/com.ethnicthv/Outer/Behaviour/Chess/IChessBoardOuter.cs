@@ -1,4 +1,5 @@
-﻿using com.ethnicthv.Outer.Behaviour.Chess.Square;
+﻿using com.ethnicthv.Inner.Object.ChessBoard;
+using com.ethnicthv.Outer.Behaviour.Chess.Square;
 using com.ethnicthv.Outer.Behaviour.Piece;
 using com.ethnicthv.Outer.Util;
 using UnityEngine;
@@ -63,6 +64,8 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
         /// </list>
         /// </returns>
         IPiece GetPiece(CbPos pos);
+
+        public void SetupBoard(ChessBoard board);
 
         void TestCall();
     }

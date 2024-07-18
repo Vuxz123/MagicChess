@@ -12,7 +12,8 @@ namespace com.ethnicthv.Inner.Object.Piece
         
         private int _id;
         
-        private readonly Type _type;
+        private readonly int _actionID;
+        private readonly int _prefabID;
         private readonly Side _side;
 
         public Side side => _side;
@@ -23,14 +24,19 @@ namespace com.ethnicthv.Inner.Object.Piece
         private bool _isDead = false;
         
         private PieceProperties _properties;
+        
+        //<-- Cache -->
+        private PieceAction _pieceAction;
+        //<-- end -->
 
-        public Piece(Type type, Side side)
+        public Piece(int actionID, int prefabID, int propertiesID, Side side)
         {
-            _type = type;
+            _actionID = actionID;
+            _prefabID = prefabID;
             _side = side;
             _id = _idCounter;
             _idCounter++;
-            _properties = PieceProperties.Provider.GetProperties(type);
+            _properties = PieceProperties.Provider.GetProperties(propertiesID);
         }
         
         public IPiece Outer { get; protected internal set; }
@@ -84,17 +90,23 @@ namespace com.ethnicthv.Inner.Object.Piece
 
         public void DoAction(ActionType type, params object[] data)
         {
-            PieceAction.GetPieceAction(_type).DoAction(type, this, data);
+            _pieceAction ??= GameManagerInner.Instance.PieceActionManager.GetPieceAction(_actionID);
+            _pieceAction.DoAction(type, this, data);
         }
         
         public void DealDamage(DamageSource damage)
         {
             _properties.Health.Damage(this, damage);
         }
-
-        public Type GetPieceType()
+        
+        public int GetPrefabID()
         {
-            return _type;
+            return _prefabID;
+        }
+
+        public int GetPieceActionID()
+        {
+            return _actionID;
         }
         
         public Side GetPieceSide()
@@ -114,12 +126,12 @@ namespace com.ethnicthv.Inner.Object.Piece
 
         public override string ToString()
         {
-            return $"{nameof(_id)}: {_id}, {nameof(_type)}: {_type}, {nameof(_side)}: {_side}, {nameof(_isMovable)}: {_isMovable}, {nameof(_isDefendable)}: {_isDefendable}, {nameof(_isAttackable)}: {_isAttackable}, {nameof(_isDead)}: {_isDead}";
+            return $"{nameof(_id)}: {_id}, {nameof(_actionID)}: {_actionID}, {nameof(_side)}: {_side}, {nameof(_isMovable)}: {_isMovable}, {nameof(_isDefendable)}: {_isDefendable}, {nameof(_isAttackable)}: {_isAttackable}, {nameof(_isDead)}: {_isDead}";
         }
         
         public string ToName()
         {
-            return $"{_side} {_type}";
+            return $"{_side} {_actionID}";
         }
     }
     
@@ -128,10 +140,10 @@ namespace com.ethnicthv.Inner.Object.Piece
         /// <summary>
         /// Action type for move, accepts 3 parameters, Piece and (int, int) location
         /// </summary>
-        public static readonly ActionType Move = new ActionType("Move", 2);
-        public static readonly ActionType Attack = new ActionType("Attack", 2);
-        public static readonly ActionType Defend = new ActionType("Defend", 2);
-        public static readonly ActionType Dead = new ActionType("Dead", 2);
+        public static readonly ActionType Move = new("Move", 2);
+        public static readonly ActionType Attack = new("Attack", 2);
+        public static readonly ActionType Defend = new("Defend", 2);
+        public static readonly ActionType Dead = new("Dead", 2);
 
         /// number of parameters
         public readonly byte Np;

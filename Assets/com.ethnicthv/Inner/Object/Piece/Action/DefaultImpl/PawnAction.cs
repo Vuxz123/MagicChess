@@ -1,18 +1,15 @@
 ﻿using System.Collections.Generic;
-using com.ethnicthv.Outer.Behaviour.Piece;
-using UnityEngine;
-using Debug = com.ethnicthv.Other.Debug;
 
-namespace com.ethnicthv.Inner.Object.Piece.Action
+namespace com.ethnicthv.Inner.Object.Piece.Action.DefaultImpl
 {
-    public class KnightAction : PieceAction
+    public class PawnAction : PieceAction
     {
         private static ActionFunction Move = DefaultMove;
         private static ActionFunction Attack = DefaultAttack;
         private static ActionFunction Defend = DefaultDefend;
         private static ActionFunction Dead = (p, d) => { };
         
-        public KnightAction() : base(Piece.Type.Knight ,new Dictionary<ActionType, ActionFunction>
+        public PawnAction() : base(new Dictionary<ActionType, ActionFunction>
         {
             {ActionType.Move, Move},
             {ActionType.Attack, Attack},

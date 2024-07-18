@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using com.ethnicthv.Inner.Object.ChessBoard.Exception;
+using com.ethnicthv.Inner.Object.Piece.Exception;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -60,26 +62,67 @@ namespace com.ethnicthv.Inner.Object.Piece.Properties
 
         public static class Provider
         {
-            private static readonly Dictionary<Piece.Type, PieceProperties> PiecePropertiesMap = new();
+            private static readonly Dictionary<int, PieceProperties> PiecePropertiesMap = new();
 
-            public static PieceProperties GetProperties(Piece.Type type)
+            private static readonly Dictionary<int, string> DefaultTypeMap = new()
+            {
+                { 1, "King" },
+                { 2, "Queen" },
+                { 3, "Rook" },
+                { 4, "Bishop" },
+                { 5, "Knight" },
+                { 6, "Pawn" }
+            };
+
+            private static readonly Dictionary<int, string> TypeMap = new();
+
+            public static PieceProperties GetProperties(int type)
             {
                 if (PiecePropertiesMap.TryGetValue(type, out var properties)) return properties;
-                ImportProperties();
-                return PiecePropertiesMap[type];
+                throw new PiecePropertiesNotFound(type);
             }
 
-            private static void ImportProperties()
+            public static void ImportProperties()
             {
                 var jsonString = Resources.Load<TextAsset>("config/piece_config").text;
                 var data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonString);
-                foreach (var t in Enum.GetValues(typeof(Piece.Type)))
+                foreach (var (key, type) in DefaultTypeMap)
                 {
-                    var type = (Piece.Type)t;
-                    var properties = data[type.ToString()];
+                    var properties = data[type];
                     var moveStyle = MovementStyle.Resolver.GetMovementStyle(properties["move_type"]);
                     var attackType = AttackType.Resolver.GetAttackType(properties["attack_type"]);
-                    PiecePropertiesMap[type] = new PieceProperties(
+                    PiecePropertiesMap[key] = new PieceProperties(
+                        health: int.Parse(properties["health"]),
+                        attack: int.Parse(properties["damage"]),
+                        defense: int.Parse(properties["defence"]),
+                        movementRange: int.Parse(properties["move_range"]),
+                        attackRange: int.Parse(properties["range"]),
+                        movementCost: int.Parse(properties["cost_per_move"]),
+                        magicAttack: int.Parse(properties["magic_damage"]),
+                        magicDefense: int.Parse(properties["magic_defence"]),
+                        amorPenetration: int.Parse(properties["armor_penetration"]),
+                        magicPenetration: int.Parse(properties["magic_penetration"]),
+                        movementStyle: moveStyle,
+                        attackType: attackType
+                    );
+                }
+            }
+
+            public static void SetTypeID(int key, string type)
+            {
+                TypeMap[key] = type;
+            }
+            
+            public static void ImportProperties(string part)
+            {
+                var jsonString = Resources.Load<TextAsset>(part).text;
+                var data = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string>>>(jsonString);
+                foreach (var (key, type) in TypeMap)
+                {
+                    var properties = data[type];
+                    var moveStyle = MovementStyle.Resolver.GetMovementStyle(properties["move_type"]);
+                    var attackType = AttackType.Resolver.GetAttackType(properties["attack_type"]);
+                    PiecePropertiesMap[key] = new PieceProperties(
                         health: int.Parse(properties["health"]),
                         attack: int.Parse(properties["damage"]),
                         defense: int.Parse(properties["defence"]),

@@ -101,8 +101,18 @@ namespace com.ethnicthv
                 var ev = new ChessBoardMoveEvent((1, 1), (2, 2));
                 NetworkManager.Instance.Send(ev);
             }
-
             if (GUI.Button(new Rect(10, 160, 150, 20), "Disconnect")) NetworkManager.Instance.Disconnect();
+            
+            if (GUI.Button(new Rect(10, 180, 150, 20), "Player1-Normal")) 
+                GameManagerInner.Instance.PlayerManager.SetPlayerFaction(0);
+            if (GUI.Button(new Rect(10, 200, 150, 20), "Player2-Normal"))
+            {
+                GameManagerInner.Instance.PlayerManager.DummyOpponent();
+                GameManagerInner.Instance.PlayerManager.SetOpponentFaction(0);
+            }
+            
+            if (GUI.Button(new Rect(10, 220, 150, 20), "Start Game")) 
+                GameManager.StartGame();
 
             //Create a Text field print console log
             //GUI.TextArea(new Rect(10, 160, 150, 100), UnityEngine.Debug.unityLogger.ToString());

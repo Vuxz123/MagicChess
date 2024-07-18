@@ -30,6 +30,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
             var size = CalcSize();
             //divide the blackSquares into 8x8 squares
             GenGrid(size);
+            
             InitPieces(GameManagerInner.Instance.CreateChessBoard());
         }
 
@@ -82,7 +83,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
             }
         }
 
-        private void InitPieces(ChessBoard board)
+        public void InitPieces(ChessBoard board)
         {
             board.Outer = GetComponent<ChestBoardBehavior>();
             for (var x = 0; x < 8; x++)
@@ -92,7 +93,7 @@ namespace com.ethnicthv.Outer.Behaviour.Chess
                     var piece = board[GameManagerInner.ConvertOuterToInnerPos(x,y)];
                     if (piece == null) continue;
                     var square = Squares[x, y].Item2;
-                    var prefab = PiecePrefabProvider.GetPiecePrefab(piece.GetPieceType());
+                    var prefab = PiecePrefabProvider.GetPiecePrefab(piece.GetPrefabID());
                     if (prefab == null) continue;
                     var go = Instantiate(prefab, transform);
                     go.transform.position = square.transform.position;

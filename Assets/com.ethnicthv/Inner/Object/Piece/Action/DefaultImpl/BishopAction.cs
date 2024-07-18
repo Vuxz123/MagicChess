@@ -1,17 +1,15 @@
 ﻿using System.Collections.Generic;
-using com.ethnicthv.Outer.Behaviour.Piece;
-using Debug = com.ethnicthv.Other.Debug;
 
-namespace com.ethnicthv.Inner.Object.Piece.Action
+namespace com.ethnicthv.Inner.Object.Piece.Action.DefaultImpl
 {
-    public class KingAction :PieceAction
+    public class BishopAction : PieceAction
     {
         private static ActionFunction Move = DefaultMove;
         private static ActionFunction Attack = DefaultAttack;
         private static ActionFunction Defend = DefaultDefend;
         private static ActionFunction Dead = (p, d) => { };
         
-        public KingAction() : base(Piece.Type.King ,new Dictionary<ActionType, ActionFunction>
+        public BishopAction() : base(new Dictionary<ActionType, ActionFunction>
         {
             {ActionType.Move, Move},
             {ActionType.Attack, Attack},
